@@ -1,0 +1,75 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.SirenservicesInternal" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Brand Colors -->
+        <item name="colorPrimary">@color/md_theme_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <item name="colorSecondary">@color/md_theme_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_onSecondary</item>
+
+        <!-- UI Background System -->
+        <item name="android:colorBackground">@color/md_theme_background</item>
+        <item name="colorSurface">@color/md_theme_surface</item>
+        <item name="colorOnSurface">@color/md_theme_onSurface</item>
+
+        <!-- Status Icon Colors / Lines -->
+        <item name="colorOutline">@color/md_theme_outline</item>
+
+        <!-- App Bar + All Buttons use Primary -->
+        <item name="materialButtonStyle">@style/Button.Primary</item>
+    </style>
+
+    <style name="Theme.SirenservicesInternal" parent="Base.Theme.SirenservicesInternal" />
+
+    <!-- Primary Button Style -->
+    <style name="Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/md_theme_primary</item>
+        <item name="android:textColor">@color/md_theme_onPrimary</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="elevation">4dp</item>
+    </style>
+
+    <!-- Secondary Outlined Button -->
+    <style name="Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/md_theme_primary</item>
+        <item name="android:textColor">@color/md_theme_primary</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
+    <!-- Card Style Global -->
+    <style name="Card.Primary" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/md_theme_surfaceContainerHigh</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="elevation">6dp</item>
+    </style>
+
+    <!-- Dashboard Text Style -->
+    <style name="DashboardText">
+        <item name="android:textColor">@color/md_theme_onSurface</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Widget.Admin.PrimaryButton" parent="Widget.Material3.Button">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:layout_marginEnd">12dp</item>
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:textColor">@color/md_theme_onPrimary</item>
+        <item name="elevation">4dp</item>
+    </style>
+
+    <style name="Widget.Admin.SecondaryButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textAllCaps">false</item>
+        <item name="strokeColor">?attr/colorPrimary</item>
+    </style>
+
+
+
+
+
+</resources>
