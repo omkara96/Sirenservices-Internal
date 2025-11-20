@@ -1,8 +1,11 @@
 package com.omkara.sirenservices_internal.models
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentId
 
 data class TripModel(
+    @DocumentId
+    var trip_id: String = "",
     var trip_number: String = "",
     var trip_date: String = "",
     var vehicle_id: String? = null,

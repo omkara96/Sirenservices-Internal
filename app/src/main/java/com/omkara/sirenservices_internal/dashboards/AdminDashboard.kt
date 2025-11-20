@@ -8,12 +8,17 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
 import com.omkara.sirenservices_internal.R
+import com.omkara.sirenservices_internal.activities.UserListActivity
+import com.omkara.sirenservices_internal.activities.VehicleListActivity
 import com.omkara.sirenservices_internal.loginsignup.UserRegistation
 import com.omkara.sirenservices_internal.loginsignup.VehicleRegistrationActivity
 
 class AdminDashboard : AppCompatActivity() {
     private lateinit var btnUserAdd : MaterialButton
     private lateinit var btnVehicleAdd : MaterialButton
+    private lateinit var btnManageDriver: MaterialButton
+    private lateinit var btnManageVehicle: MaterialButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,5 +37,15 @@ class AdminDashboard : AppCompatActivity() {
             startActivity(Intent(this, VehicleRegistrationActivity::class.java))
 
         }
-}
+
+        btnManageDriver = findViewById(R.id.btnManageDriver)
+        btnManageDriver.setOnClickListener {
+            startActivity(Intent(this, UserListActivity::class.java))
+        }
+
+        btnManageVehicle = findViewById(R.id.btnAddVehicle1)
+        btnManageVehicle.setOnClickListener {
+            startActivity(Intent(this, VehicleListActivity::class.java))
+        }
+    }
 }
