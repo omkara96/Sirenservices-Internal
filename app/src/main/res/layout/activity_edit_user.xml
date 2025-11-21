@@ -1,37 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".loginsignup.UserRegistation"
     android:fillViewport="true"
+    android:layout_width="match_parent"
     android:padding="20dp"
-    android:background="?attr/colorSurface">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:layout_height="wrap_content">
 
-        <!-- Title -->
-        <TextView
-            android:text="Register User"
-            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-            android:textColor="?attr/colorOnSurface"
-            android:layout_marginBottom="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <!-- First Name -->
+        <!-- FIRST NAME -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/rFname"
+            android:id="@+id/layoutFirstName"
+            android:hint="First Name"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/ic_user"
-            android:hint="First Name">
+            app:boxBackgroundMode="outline"
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtFirstName"
@@ -39,13 +27,14 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Middle Name -->
+        <!-- MIDDLE NAME -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/rMname"
+            android:id="@+id/layoutMiddleName"
+            android:hint="Middle Name"
             android:layout_marginTop="12dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Middle Name">
+            app:boxBackgroundMode="outline"
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtMiddleName"
@@ -53,13 +42,14 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Last Name -->
+        <!-- LAST NAME -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutLastName"
+            android:hint="Last Name"
             android:layout_marginTop="12dp"
-            android:id="@+id/rLname"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Last Name">
+            app:boxBackgroundMode="outline"
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtLastName"
@@ -67,7 +57,6 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- DOB -->
         <!-- DOB Picker -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutDob"
@@ -86,46 +75,30 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- Mobile with Country Code Picker -->
-        <LinearLayout
-            android:gravity="center_vertical"
+        <!-- MOBILE -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutMobile"
+            android:hint="Mobile Number"
             android:layout_marginTop="12dp"
+            app:boxBackgroundMode="outline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.hbb20.CountryCodePicker
-                android:id="@+id/ccp"
-                app:ccp_showFullName="true"
-                app:ccp_showFlag="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_marginStart="10dp"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtMobile"
+                android:inputType="phone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:startIconDrawable="@drawable/ic_phone"
-                android:id="@+id/rPhone"
-                android:hint="Mobile">
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtMobile"
-                    android:inputType="phone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-        <!-- Email -->
+        <!-- EMAIL -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutEmail"
+            android:hint="Email"
             android:layout_marginTop="12dp"
+            app:boxBackgroundMode="outline"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/ic_email"
-            android:id="@+id/rEmail"
-            android:hint="Email">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtEmail"
@@ -134,48 +107,47 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Address -->
+        <!-- ADDRESS -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutAddress"
+            android:hint="Address"
             android:layout_marginTop="12dp"
+            app:boxBackgroundMode="outline"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Address">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtAddress"
-                android:minLines="2"
-                android:inputType="textMultiLine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- User Role Dropdown -->
+        <!-- ROLE DROPDOWN -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/dropdownRole"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
+            android:id="@+id/layoutRole"
+            android:hint="User Role"
             android:layout_marginTop="12dp"
-            android:hint="Select Role"
-            app:startIconDrawable="@drawable/ic_dropdown"
+            style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            app:boxBackgroundMode="outline"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
                 android:id="@+id/autoRole"
                 android:inputType="none"
-                android:focusable="false"
                 android:clickable="true"
+                android:focusable="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Status Dropdown -->
+        <!-- STATUS DROPDOWN -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/dropdownStatus"
+            android:id="@+id/layoutStatus"
+            android:hint="Status"
+            android:layout_marginTop="12dp"
             style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
-            android:layout_marginTop="12dp"
-            android:hint="Status"
-            app:startIconDrawable="@drawable/ic_usermode"
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
@@ -187,15 +159,14 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Submit Button -->
+        <!-- UPDATE BUTTON -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRegisterUser"
+            android:id="@+id/btnUpdateUser"
+            android:text="Update User"
             style="@style/Widget.Admin.PrimaryButton"
-            android:text="Save User"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="24dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
-
 </ScrollView>

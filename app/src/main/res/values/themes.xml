@@ -68,6 +68,22 @@
         <item name="strokeColor">?attr/colorPrimary</item>
     </style>
 
+    <!-- Label text style (Title for a field) -->
+    <style name="viewLabel">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:fontFamily">@font/muli_semibold</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
+
+    <!-- Value text style (Actual data) -->
+    <style name="viewValue">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">@font/muli</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
 
 
 

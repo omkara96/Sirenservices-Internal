@@ -7,6 +7,8 @@
         android:id="@+id/action_profile"
         android:title="Profile"
         android:icon="@drawable/ic_user"
+        android:iconTint="?attr/colorOnPrimary"
+        android:iconTintMode="src_in"
         app:showAsAction="ifRoom" />
 
     <!-- Logout Option -->
@@ -14,6 +16,8 @@
         android:id="@+id/action_logout"
         android:title="Logout"
         android:icon="@drawable/ic_logout"
+        android:iconTint="?attr/colorOnPrimary"
+        android:iconTintMode="multiply"
         app:showAsAction="ifRoom" />
 
 </menu>
