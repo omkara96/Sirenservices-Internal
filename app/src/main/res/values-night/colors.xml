@@ -140,4 +140,11 @@
     <color name="md_theme_surfaceContainer_highContrast">#322F35</color>
     <color name="md_theme_surfaceContainerHigh_highContrast">#3E3A40</color>
     <color name="md_theme_surfaceContainerHighest_highContrast">#49454C</color>
+    <color name="att_present_green">#4CAF50</color>
+    <color name="att_absent_red">#F44336</color>
+    <color name="att_late_orange">#FF9800</color>
+    <color name="att_half_yellow">#FFC107</color>
+    <color name="att_leave_blue">#2196F3</color>
+    <color name="att_holiday_teal">#009688</color>
+
 </resources>

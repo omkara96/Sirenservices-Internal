@@ -1,263 +1,353 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Top App Bar -->
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/topAppBar"
+    <!-- MAIN -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:title="Admin Dashboard"
-        app:titleCentered="true"
-        android:paddingTop="9dp"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
-        app:navigationIcon="@drawable/ic_menu"
-        app:navigationIconTint="?attr/colorOnPrimary"
-        app:menu="@menu/admin_dashboard_menu"
-        app:layout_scrollFlags="scroll|enterAlways" />
+        android:layout_height="match_parent">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp"
-        android:layout_marginTop="?attr/actionBarSize">
-
-        <LinearLayout
-            android:orientation="vertical"
+        <!-- Toolbar -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarDashboard"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:title="Admin Dashboard"
+            app:titleCentered="true"
+            app:titleTextColor="?attr/colorOnPrimary"
+            app:navigationIcon="@drawable/ic_menu" />
 
-            <!-- - Existing System Overview (untouched) - -->
-            <com.google.android.material.card.MaterialCardView
+        <!-- CONTENT -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize">
+
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:layout_height="match_parent">
 
+                <!-- GRID = Rows of 2 Cards each -->
                 <LinearLayout
-                    android:padding="16dp"
+                    android:id="@+id/dashboardContainer"
                     android:orientation="vertical"
+                    android:padding="12dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView
-                        android:text="System Overview"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/tvTotalUsers"
-                        android:text="Users: 0"
-                        android:textSize="15sp"
-                        android:layout_marginTop="8dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/tvTotalVehicles"
-                        android:text="Vehicles: 0"
-                        android:layout_marginTop="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/tvActiveVehicles"
-                        android:text="Active Vehicles: 0"
-                        android:layout_marginTop="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/tvThirdPartyVehicles"
-                        android:text="3rd Party Vehicles: 0"
-                        android:layout_marginTop="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- ================ NEW TRIP STATISTICS CARD ================ -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:padding="16dp"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:text="Trip Statistics"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                    <!-- Row 1: Ongoing + Completed -->
+                    <!-- ROW 1 -->
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp">
+                        android:layout_height="wrap_content">
 
-                        <LinearLayout
-                            android:orientation="vertical"
-                            android:layout_weight="1"
+                        <!-- USERS CARD -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardUsers"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:id="@+id/tvOngoingTrips"
-                                android:text="Ongoing Trips: 0"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:orientation="vertical"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="6dp"
                             android:layout_weight="1"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content">
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="6dp">
 
-                            <TextView
-                                android:id="@+id/tvCompletedToday"
-                                android:text="Completed Today: 0"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
-                        </LinearLayout>
+                            <LinearLayout
+                                android:padding="12dp"
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:text="Users"
+                                    style="@style/TextAppearance.Material3.TitleMedium"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/tvUsersTotal"
+                                    android:text="Total: -"
+                                    android:layout_marginTop="6dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/tvUsersActive"
+                                    android:text="Active: -"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/tvUsersOccupied"
+                                    android:text="Occupied: -"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnViewUsers"
+                                    android:text="Open Users"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp" />
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- VEHICLES CARD -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardVehicles"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="6dp"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="6dp">
+
+                            <LinearLayout
+                                android:padding="12dp"
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:text="Vehicles"
+                                    style="@style/TextAppearance.Material3.TitleMedium"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/tvVehiclesTotal"
+                                    android:text="Total: -"
+                                    android:layout_marginTop="6dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/tvVehiclesActive"
+                                    android:text="Available: -"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/tvVehiclesMaint"
+                                    android:text="Maintenance: -"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnViewVehicles"
+                                    android:text="Open Vehicles"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"/>
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
                     </LinearLayout>
 
-                    <!-- Row 2: Pending + Revenue -->
+                    <!-- ROW 2 -->
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp">
+                        android:layout_height="wrap_content">
 
-                        <LinearLayout
-                            android:orientation="vertical"
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardToday"
                             android:layout_width="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:layout_height="wrap_content">
+                            android:layout_margin="6dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="6dp">
 
-                            <TextView
-                                android:id="@+id/tvPendingPayments"
-                                android:text="Pending Payments: 0"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
-                        </LinearLayout>
+                            <LinearLayout
+                                android:padding="12dp"
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
 
-                        <LinearLayout
-                            android:orientation="vertical"
+                                <TextView
+                                    android:text="Today"
+                                    style="@style/TextAppearance.Material3.TitleMedium"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/tvTodayRevenue"
+                                    android:text="Revenue: ₹ -"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/tvTodaySpend"
+                                    android:text="Spent: ₹ -"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/tvTodayPending"
+                                    android:text="Pending: ₹ -"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardWeekly"
                             android:layout_width="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:layout_height="wrap_content">
+                            android:layout_margin="6dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="6dp">
 
-                            <TextView
-                                android:id="@+id/tvRevenueToday"
-                                android:text="Revenue Today: ₹0"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
-                        </LinearLayout>
+                            <LinearLayout
+                                android:padding="12dp"
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:text="Weekly"
+                                    style="@style/TextAppearance.Material3.TitleMedium"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView android:id="@+id/tvWeekRevenue"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Revenue: ₹ -" />
+                                <TextView android:id="@+id/tvWeekSpend"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Spent: ₹ -" />
+                                <TextView android:id="@+id/tvWeekBalance"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Balance: ₹ -" />
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Add monthly, yearly, quick links similarly -->
 
                     </LinearLayout>
 
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    <!-- Monthly -->
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-            <!-- ===================== TRIP ACTION BUTTONS ===================== -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnOngoingTrips"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="View Ongoing Trips"
-                style="@style/Widget.MaterialComponents.Button" />
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardMonthly"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="6dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="6dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCompletedTrips"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="View Completed Trips"
-                style="@style/Widget.MaterialComponents.Button" />
+                            <LinearLayout
+                                android:padding="12dp"
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCreateTrip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Create New Trip"
-                style="@style/Widget.MaterialComponents.Button" />
+                                <TextView
+                                    android:text="This Month"
+                                    style="@style/TextAppearance.Material3.TitleMedium"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnTips"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Trips Management"
-                style="@style/Widget.MaterialComponents.Button" />
+                                <TextView
+                                    android:id="@+id/tvMonthRevenue"
+                                    android:text="Revenue: ₹ -"
+                                    android:layout_marginTop="6dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
 
-            <!--  Existing Buttons - -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCreateUser"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Create User"
-                style="@style/Widget.MaterialComponents.Button" />
+                                <TextView
+                                    android:id="@+id/tvMonthSpend"
+                                    android:text="Spent: ₹ -"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAddVehicle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Register New Vehicle"
-                style="@style/Widget.MaterialComponents.Button" />
+                                <TextView
+                                    android:id="@+id/tvMonthDailyAvg"
+                                    android:text="Daily Avg: ₹ -"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnManageVehicles"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Manage Vehicles"
-                style="@style/Widget.MaterialComponents.Button" />
+                        <!-- Yearly card will be placed next to Monthly -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardYearly"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="6dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="6dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnServiceRecords"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Service Records"
-                style="@style/Widget.MaterialComponents.Button" />
+                            <LinearLayout
+                                android:padding="12dp"
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLogout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Logout"
-                android:layout_marginTop="16dp"
-                android:textColor="@android:color/white"
-                app:backgroundTint="@android:color/holo_red_dark" />
+                                <TextView
+                                    android:text="This Year"
+                                    style="@style/TextAppearance.Material3.TitleMedium"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
 
-        </LinearLayout>
+                                <TextView
+                                    android:id="@+id/tvYearRevenue"
+                                    android:text="Revenue: ₹ -"
+                                    android:layout_marginTop="6dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
 
-    </ScrollView>
+                                <TextView
+                                    android:id="@+id/tvYearSpend"
+                                    android:text="Spent: ₹ -"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                                <TextView
+                                    android:id="@+id/tvYearDailyAvg"
+                                    android:text="Daily Avg: ₹ -"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+                            </LinearLayout>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </LinearLayout>
+
+                    </LinearLayout>
+
+
+
+            </ScrollView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- NAVIGATION DRAWER -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/drawer_menu" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -1,66 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".loginsignup.UserRegistation"
     android:fillViewport="true"
     android:padding="20dp"
     android:background="?attr/colorSurface">
 
     <LinearLayout
         android:orientation="vertical"
+        android:padding="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:layout_height="wrap_content">
 
         <!-- Title -->
         <TextView
             android:text="Register User"
-            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-            android:textColor="?attr/colorOnSurface"
-            android:layout_marginBottom="20dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <!-- First Name -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/rFname"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/ic_user"
-            android:hint="First Name">
+            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+            android:layout_marginBottom="20dp" />
 
+        <!-- ==========================
+             BASIC USER DETAILS
+        =========================== -->
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:hint="First Name"
+            android:id="@+id/rFname"
+            app:startIconDrawable="@drawable/ic_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtFirstName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Middle Name -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/rMname"
+            android:hint="Middle Name"
             android:layout_marginTop="12dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Middle Name">
-
+            android:layout_height="wrap_content">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtMiddleName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Last Name -->
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_marginTop="12dp"
-            android:id="@+id/rLname"
+            android:hint="Last Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Last Name">
-
+            android:layout_marginTop="12dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtLastName"
                 android:layout_width="match_parent"
@@ -68,27 +61,23 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- DOB -->
-        <!-- DOB Picker -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutDob"
-            android:layout_marginTop="12dp"
             android:hint="Date of Birth"
-            app:boxBackgroundMode="outline"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtDob"
                 android:focusable="false"
                 android:clickable="true"
-                android:inputType="none"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- Mobile with Country Code Picker -->
+        <!-- Mobile -->
         <LinearLayout
+            android:orientation="horizontal"
             android:gravity="center_vertical"
             android:layout_marginTop="12dp"
             android:layout_width="match_parent"
@@ -96,37 +85,28 @@
 
             <com.hbb20.CountryCodePicker
                 android:id="@+id/ccp"
-                app:ccp_showFullName="true"
-                app:ccp_showFlag="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginStart="10dp"
+                android:hint="Mobile"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:startIconDrawable="@drawable/ic_phone"
-                android:id="@+id/rPhone"
-                android:hint="Mobile">
-
+                android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtMobile"
                     android:inputType="phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </com.google.android.material.textfield.TextInputLayout>
-
         </LinearLayout>
 
         <!-- Email -->
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_marginTop="12dp"
+            android:hint="Email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/ic_email"
-            android:id="@+id/rEmail"
-            android:hint="Email">
-
+            android:layout_marginTop="12dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtEmail"
                 android:inputType="textEmailAddress"
@@ -136,11 +116,10 @@
 
         <!-- Address -->
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_marginTop="12dp"
+            android:hint="Address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Address">
-
+            android:layout_marginTop="12dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtAddress"
                 android:minLines="2"
@@ -149,48 +128,310 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- User Role Dropdown -->
+        <!-- User Role -->
         <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/dropdownRole"
             style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
             android:layout_marginTop="12dp"
-            android:hint="Select Role"
-            app:startIconDrawable="@drawable/ic_dropdown"
-            android:layout_height="wrap_content">
-
+            android:hint="Select User Role">
             <AutoCompleteTextView
                 android:id="@+id/autoRole"
-                android:inputType="none"
-                android:focusable="false"
-                android:clickable="true"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:clickable="true"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Status Dropdown -->
+        <!-- Status -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/dropdownStatus"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_marginTop="12dp"
-            android:hint="Status"
-            app:startIconDrawable="@drawable/ic_usermode"
-            android:layout_height="wrap_content">
-
+            android:hint="User Status">
             <AutoCompleteTextView
                 android:id="@+id/autoStatus"
-                android:inputType="none"
-                android:focusable="false"
-                android:clickable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Submit Button -->
+        <!-- ==========================
+             PROFILE PHOTO
+        =========================== -->
+        <TextView
+            android:id="@+id/tvProfilePhotoLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Profile Photo"
+            android:layout_marginTop="20dp"/>
+
+        <ImageView
+            android:id="@+id/imgProfilePhoto"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:background="#E0E0E0"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"/>
+
+        <Button
+            android:id="@+id/btnPickProfile"
+            android:text="Upload Profile Image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Section Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Optional Documents (Upload if available)"
+            style="@style/TextAppearance.Material3.TitleMedium" />
+
+        <!-- ROW 1: Aadhar Front + Aadhar Back -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:padding="4dp">
+
+                <Button
+                    android:id="@+id/btnPickAadharFront"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aadhar Front" />
+
+                <ImageView
+                    android:id="@+id/imgAadharFrontPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="6dp"
+                    android:background="#E0E0E0"
+                    android:scaleType="centerCrop" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:padding="4dp">
+
+                <Button
+                    android:id="@+id/btnPickAadharBack"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aadhar Back" />
+
+                <ImageView
+                    android:id="@+id/imgAadharBackPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="6dp"
+                    android:background="#E0E0E0"
+                    android:scaleType="centerCrop" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <!-- ROW 2: PAN + Passbook -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:padding="4dp">
+
+                <Button
+                    android:id="@+id/btnPickPan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="PAN" />
+
+                <ImageView
+                    android:id="@+id/imgPanPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="6dp"
+                    android:background="#E0E0E0"
+                    android:scaleType="centerCrop" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:padding="4dp">
+
+                <Button
+                    android:id="@+id/btnPickPassbook"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Passbook" />
+
+                <ImageView
+                    android:id="@+id/imgPassbookPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="6dp"
+                    android:background="#E0E0E0"
+                    android:scaleType="centerCrop" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <!-- ROW 3: Driving Licence -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp">
+
+            <Button
+                android:id="@+id/btnPickLicence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Driving Licence" />
+
+            <ImageView
+                android:id="@+id/imgLicencePreview"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="6dp"
+                android:background="#E0E0E0"
+                android:scaleType="centerCrop" />
+        </LinearLayout>
+
+
+
+        <!-- ==========================
+             DRIVER-ONLY SECTION
+        =========================== -->
+        <LinearLayout
+            android:id="@+id/driverSection"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Driver Documents"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Document fields -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="License Number">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtLicense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Aadhar Number"
+                android:layout_marginTop="12dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtAadhar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="PAN Number"
+                android:layout_marginTop="12dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- BANK DETAILS -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bank Details"
+                android:layout_marginTop="20dp"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Account Number">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtAccNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="IFSC Code"
+                android:layout_marginTop="12dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtIFSC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Bank Name"
+                android:layout_marginTop="12dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtBankName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Branch Name"
+                android:layout_marginTop="12dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtBranchName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <!-- Submit -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRegisterUser"
-            style="@style/Widget.Admin.PrimaryButton"
             android:text="Save User"
             android:layout_marginTop="22dp"
             android:layout_width="match_parent"

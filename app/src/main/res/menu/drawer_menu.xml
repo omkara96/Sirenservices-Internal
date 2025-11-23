@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/nav_dashboard" android:title="Dashboard" android:icon="@drawable/ic_home" />
+    <item android:id="@+id/nav_users" android:title="Users" android:icon="@drawable/ic_user" />
+    <item android:id="@+id/nav_vehicles" android:title="Vehicles" android:icon="@drawable/ic_vehicle" />
+    <item android:id="@+id/nav_trips" android:title="Trips" android:icon="@drawable/ic_trip" />
+    <item android:id="@+id/nav_service" android:title="Service Records" android:icon="@drawable/ic_services" />
+    <item android:id="@+id/nav_billing" android:title="Billing" android:icon="@drawable/ic_bill" />
+    <item android:id="@+id/nav_reports" android:title="Reports" android:icon="@drawable/ic_records" />
+    <item android:id="@+id/nav_settings" android:title="Settings" android:icon="@drawable/ic_settings" />
+</menu>

@@ -1,277 +1,288 @@
 package com.omkara.sirenservices_internal.loginsignup
 
+import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.util.Patterns
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
+import android.widget.*
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.button.MaterialButton
+import androidx.lifecycle.lifecycleScope
+import coil.load
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import com.hbb20.CountryCodePicker
-import com.google.firebase.firestore.FirebaseFirestore
 import com.omkara.sirenservices_internal.R
-import java.util.*
+import com.omkara.sirenservices_internal.viewmodels.RegistrationState
+import com.omkara.sirenservices_internal.viewmodels.UserRegistrationViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.io.InputStream
+import java.util.Calendar
 
 class UserRegistation : AppCompatActivity() {
 
-    private lateinit var firestore: FirebaseFirestore
+    private val vm: UserRegistrationViewModel by viewModels()
 
-    private lateinit var fname: TextInputEditText
-    private lateinit var mname: TextInputEditText
-    private lateinit var lname: TextInputEditText
-    private lateinit var uphone: TextInputEditText
-    private lateinit var uemail: TextInputEditText
-    private lateinit var ccp: CountryCodePicker
+    // Views
+    private lateinit var edtFirstName: TextInputEditText
+    private lateinit var edtMiddleName: TextInputEditText
+    private lateinit var edtLastName: TextInputEditText
+    private lateinit var edtDob: TextInputEditText
+    private lateinit var edtMobile: TextInputEditText
+    private lateinit var edtEmail: TextInputEditText
+    private lateinit var edtAddress: TextInputEditText
     private lateinit var autoRole: AutoCompleteTextView
     private lateinit var autoStatus: AutoCompleteTextView
-    private lateinit var btnRegisterUser: MaterialButton
+    private lateinit var driverSection: LinearLayout
 
-    private lateinit var rFname: TextInputLayout
-    private lateinit var rLname: TextInputLayout
-    private lateinit var rPhone: TextInputLayout
-    private lateinit var rEmail: TextInputLayout
-    private lateinit var dropdownRole: TextInputLayout
-    private lateinit var dropdownStatus: TextInputLayout
+    // Driver Fields
+    private lateinit var edtLicense: TextInputEditText
+    private lateinit var edtAadhar: TextInputEditText
+    private lateinit var edtPan: TextInputEditText
+    private lateinit var edtAccNo: TextInputEditText
+    private lateinit var edtIFSC: TextInputEditText
+    private lateinit var edtBankName: TextInputEditText
+    private lateinit var edtBranchName: TextInputEditText
 
-    private lateinit var edtDob: TextInputEditText
-    private lateinit var layoutDob: TextInputLayout
+    // Images
+    private lateinit var btnPickProfile: Button
+    private lateinit var imgProfile: ImageView
 
+    private lateinit var btnPickAadharFront: Button
+    private lateinit var btnPickAadharBack: Button
+    private lateinit var btnPickPan: Button
+    private lateinit var btnPickPassbook: Button
+    private lateinit var btnPickLicence: Button
+
+    private lateinit var imgAadharFront: ImageView
+    private lateinit var imgAadharBack: ImageView
+    private lateinit var imgPan: ImageView
+    private lateinit var imgPassbook: ImageView
+    private lateinit var imgLicence: ImageView
+
+    private lateinit var btnRegister: Button
+
+    // Image URIs
+    private var profileUri: Uri? = null
+    private var aadharFrontUri: Uri? = null
+    private var aadharBackUri: Uri? = null
+    private var panUri: Uri? = null
+    private var passbookUri: Uri? = null
+    private var licenceUri: Uri? = null
+
+    // Request Codes
+    private val PICK_PROFILE_REQ = 201
+    private val REQ_AADHAR_FRONT = 202
+    private val REQ_AADHAR_BACK = 203
+    private val REQ_PAN = 204
+    private val REQ_PASSBOOK = 205
+    private val REQ_LICENCE = 206
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_user_registation)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        bindViews()
+        setupDropdowns()
+        setupListeners()
+        observeViewModel()
+    }
 
-        // Initialize views
-        fname = findViewById(R.id.edtFirstName)
-        mname = findViewById(R.id.edtMiddleName)
-        lname = findViewById(R.id.edtLastName)
-        uemail = findViewById(R.id.edtEmail)
+    private fun bindViews() {
+        edtFirstName = findViewById(R.id.edtFirstName)
+        edtMiddleName = findViewById(R.id.edtMiddleName)
+        edtLastName = findViewById(R.id.edtLastName)
+        edtDob = findViewById(R.id.edtDob)
+        edtMobile = findViewById(R.id.edtMobile)
+        edtEmail = findViewById(R.id.edtEmail)
+        edtAddress = findViewById(R.id.edtAddress)
         autoRole = findViewById(R.id.autoRole)
         autoStatus = findViewById(R.id.autoStatus)
-        btnRegisterUser = findViewById(R.id.btnRegisterUser)
-        rFname = findViewById(R.id.rFname)
-        rLname = findViewById(R.id.rLname)
-        rPhone = findViewById(R.id.rPhone)
-        rEmail = findViewById(R.id.rEmail)
-        dropdownRole = findViewById(R.id.dropdownRole)
-        dropdownStatus = findViewById(R.id.dropdownStatus)
+        driverSection = findViewById(R.id.driverSection)
 
-        uphone = findViewById(R.id.edtMobile)
-        ccp = findViewById(R.id.ccp)
-        ccp.registerCarrierNumberEditText(uphone)
+        edtLicense = findViewById(R.id.edtLicense)
+        edtAadhar = findViewById(R.id.edtAadhar)
+        edtPan = findViewById(R.id.edtPan)
+        edtAccNo = findViewById(R.id.edtAccNo)
+        edtIFSC = findViewById(R.id.edtIFSC)
+        edtBankName = findViewById(R.id.edtBankName)
+        edtBranchName = findViewById(R.id.edtBranchName)
 
-        firestore = FirebaseFirestore.getInstance()
+        btnPickProfile = findViewById(R.id.btnPickProfile)
+        imgProfile = findViewById(R.id.imgProfilePhoto)
+        btnRegister = findViewById(R.id.btnRegisterUser)
 
-        edtDob = findViewById(R.id.edtDob)
-        layoutDob = findViewById(R.id.layoutDob)
+        btnPickAadharFront = findViewById(R.id.btnPickAadharFront)
+        btnPickAadharBack = findViewById(R.id.btnPickAadharBack)
+        btnPickPan = findViewById(R.id.btnPickPan)
+        btnPickPassbook = findViewById(R.id.btnPickPassbook)
+        btnPickLicence = findViewById(R.id.btnPickLicence)
 
-        edtDob.setOnClickListener {
-            showDobPicker()
+        imgAadharFront = findViewById(R.id.imgAadharFrontPreview)
+        imgAadharBack = findViewById(R.id.imgAadharBackPreview)
+        imgPan = findViewById(R.id.imgPanPreview)
+        imgPassbook = findViewById(R.id.imgPassbookPreview)
+        imgLicence = findViewById(R.id.imgLicencePreview)
+    }
+
+    private fun setupDropdowns() {
+        autoRole.setAdapter(
+            ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                listOf("owner", "driver", "staff", "operator", "mechanic"))
+        )
+        autoRole.setOnItemClickListener { _, _, pos, _ ->
+            toggleDriverSection(autoRole.text.toString() == "driver")
         }
 
-        layoutDob.setOnClickListener {
-            showDobPicker()
-        }
+        autoStatus.setAdapter(
+            ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                listOf("active", "inactive"))
+        )
+    }
 
+    private fun setupListeners() {
 
-        // Setup Role dropdown
-        val roles = listOf("Driver", "Third Party Driver", "User", "Staff")
-        autoRole.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, roles))
+        edtDob.setOnClickListener { showDobPicker() }
 
-        // Setup Status dropdown
-        val statuses = listOf("Active", "Inactive", "New", "Pending")
-        autoStatus.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, statuses))
+        btnPickProfile.setOnClickListener { pickImage(PICK_PROFILE_REQ) }
+        btnPickAadharFront.setOnClickListener { pickImage(REQ_AADHAR_FRONT) }
+        btnPickAadharBack.setOnClickListener { pickImage(REQ_AADHAR_BACK) }
+        btnPickPan.setOnClickListener { pickImage(REQ_PAN) }
+        btnPickPassbook.setOnClickListener { pickImage(REQ_PASSBOOK) }
+        btnPickLicence.setOnClickListener { pickImage(REQ_LICENCE) }
 
-        btnRegisterUser.setOnClickListener {
-            if (validateFields()) {
-                checkIfUserExists()
+        btnRegister.setOnClickListener { submitForm() }
+    }
+
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            vm.state.collectLatest { st ->
+                when (st) {
+                    is RegistrationState.Loading -> {
+                        btnRegister.isEnabled = false
+                        btnRegister.text = "Saving..."
+                    }
+                    is RegistrationState.Success -> {
+                        Toast.makeText(this@UserRegistation, "Saved!", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                    is RegistrationState.Error -> {
+                        btnRegister.isEnabled = true
+                        btnRegister.text = "Save User"
+                        Toast.makeText(this@UserRegistation, st.message, Toast.LENGTH_LONG).show()
+                    }
+                    else -> Unit
+                }
             }
         }
     }
 
     private fun showDobPicker() {
-        val calendar = Calendar.getInstance()
-
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
+        val cal = Calendar.getInstance()
         val dp = DatePickerDialog(
             this,
-            { _, selectedYear, selectedMonth, selectedDay ->
-                val dob = String.format("%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear)
-                edtDob.setText(dob)
-            },
-            year,
-            month,
-            day
+            { _, y, m, d -> edtDob.setText(String.format("%02d-%02d-%04d", d, m + 1, y)) },
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH)
         )
-
-        // Max date today (no future DOB)
         dp.datePicker.maxDate = System.currentTimeMillis()
-
         dp.show()
     }
 
+    private fun pickImage(req: Int) {
+        ImagePicker.with(this)
+            .compress(1024)
+            .maxResultSize(1600, 1600)
+            .start(req)
+    }
 
-    private fun validateFields(): Boolean {
-        val firstName = fname.text.toString().trim()
-        val lastName = lname.text.toString().trim()
-        val mobile = uphone.text.toString().trim()
-        val email = uemail.text.toString().trim()
+    override fun onActivityResult(req: Int, result: Int, data: Intent?) {
+        super.onActivityResult(req, result, data)
+        if (result != Activity.RESULT_OK || data == null) return
+        val uri = data.data ?: return
+
+        when (req) {
+            PICK_PROFILE_REQ -> {
+                profileUri = uri; imgProfile.load(uri)
+            }
+            REQ_AADHAR_FRONT -> {
+                aadharFrontUri = uri; imgAadharFront.load(uri)
+            }
+            REQ_AADHAR_BACK -> {
+                aadharBackUri = uri; imgAadharBack.load(uri)
+            }
+            REQ_PAN -> {
+                panUri = uri; imgPan.load(uri)
+            }
+            REQ_PASSBOOK -> {
+                passbookUri = uri; imgPassbook.load(uri)
+            }
+            REQ_LICENCE -> {
+                licenceUri = uri; imgLicence.load(uri)
+            }
+        }
+    }
+
+    private fun toggleDriverSection(show: Boolean) {
+        driverSection.visibility = if (show) LinearLayout.VISIBLE else LinearLayout.GONE
+    }
+
+    private fun submitForm() {
+
+        val firstName = edtFirstName.text.toString().trim()
+        val mobile = edtMobile.text.toString().trim()
         val role = autoRole.text.toString().trim()
-        val status = autoStatus.text.toString().trim()
 
-        if (firstName.isEmpty()) {
-            rFname.error = "First name is required"
-            return false
-        } else rFname.error = null
+        if (firstName.isEmpty() || mobile.isEmpty() || role.isEmpty()) {
+            Toast.makeText(this, "Name, Mobile & Role required", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        if (lastName.isEmpty()) {
-            rLname.error = "Last name is required"
-            return false
-        } else rLname.error = null
+        val docInputs = mutableMapOf<String, suspend () -> InputStream?>()
 
-        if (mobile.isEmpty()) {
-            rPhone.error = "Mobile number is required"
-            return false
-        } else if (mobile.length < 6) {
-            rPhone.error = "Enter a valid mobile number"
-            return false
-        } else rPhone.error = null
+        if (aadharFrontUri != null)
+            docInputs["aadharFront"] = { contentResolver.openInputStream(aadharFrontUri!!) }
 
-        if (email.isEmpty()) {
-            rEmail.error = "Email is required"
-            return false
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            rEmail.error = "Enter a valid email"
-            return false
-        } else rEmail.error = null
+        if (aadharBackUri != null)
+            docInputs["aadharBack"] = { contentResolver.openInputStream(aadharBackUri!!) }
 
-        if (role.isEmpty()) {
-            dropdownRole.error = "Select a role"
-            return false
-        } else dropdownRole.error = null
+        if (panUri != null)
+            docInputs["pan"] = { contentResolver.openInputStream(panUri!!) }
 
-        if (status.isEmpty()) {
-            dropdownStatus.error = "Select a status"
-            return false
-        } else dropdownStatus.error = null
+        if (passbookUri != null)
+            docInputs["passbook"] = { contentResolver.openInputStream(passbookUri!!) }
 
-        return true
-    }
+        if (licenceUri != null)
+            docInputs["licence"] = { contentResolver.openInputStream(licenceUri!!) }
 
-    /**
-     * NEW: Check if user already exists (email or mobile)
-     */
-    private fun checkIfUserExists() {
-        val mobileFull = ccp.fullNumberWithPlus
-        val email = uemail.text.toString().trim()
+        val profileProvider: suspend () -> InputStream? = {
+            profileUri?.let { contentResolver.openInputStream(it) }
+        }
 
-        val progress = loadingDialog("Checking user...")
-        progress.show()
-
-        // Query by mobile OR email
-        firestore.collection("users")
-            .whereEqualTo("mobile", mobileFull)
-            .get()
-            .addOnSuccessListener { snap1 ->
-
-                firestore.collection("users")
-                    .whereEqualTo("email", email)
-                    .get()
-                    .addOnSuccessListener { snap2 ->
-
-                        progress.dismiss()
-
-                        if (!snap1.isEmpty || !snap2.isEmpty) {
-                            showUserExistsDialog()
-                        } else {
-                            registerUser()
-                        }
-                    }
-            }
-            .addOnFailureListener {
-                progress.dismiss()
-                Toast.makeText(this, "Check failed: ${it.message}", Toast.LENGTH_LONG).show()
-            }
-    }
-
-    /**
-     * If duplicate user found
-     */
-    private fun showUserExistsDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("User Already Exists")
-            .setMessage("A user with the same email or mobile number already exists. Try with Different Email or Mobile.")
-            .setCancelable(false)
-            .setPositiveButton("OK") { d, _ ->
-                d.dismiss()
-               // finish()  // Go back
-            }.show()
-    }
-
-
-
-    private fun registerUser() {
-        val progressDialog = loadingDialog("Registering user...")
-        progressDialog.show()
-
-        val user = hashMapOf(
-            "firstName" to fname.text.toString().trim(),
-            "middleName" to mname.text.toString().trim(),
-            "lastName" to lname.text.toString().trim(),
-            "mobile" to ccp.fullNumberWithPlus,
-            "email" to uemail.text.toString().trim(),
-            "role" to autoRole.text.toString().trim(),
-            "status" to autoStatus.text.toString().trim(),
-            "created_at" to Date(),
-            "updated_at" to Date()
+        vm.registerUser(
+            userId = null,
+            firstName = firstName,
+            middleName = edtMiddleName.text.toString(),
+            lastName = edtLastName.text.toString(),
+            dob = edtDob.text.toString(),
+            mobile = mobile,
+            email = edtEmail.text.toString(),
+            address = edtAddress.text.toString(),
+            role = role,
+            status = autoStatus.text.toString(),
+            profileUri = profileUri,
+            profileInputStreamProvider = profileProvider,
+            isDriver = role == "driver",
+            licenseNo = edtLicense.text.toString(),
+            aadharNo = edtAadhar.text.toString(),
+            panNo = edtPan.text.toString(),
+            accountNo = edtAccNo.text.toString(),
+            ifsc = edtIFSC.text.toString(),
+            bankName = edtBankName.text.toString(),
+            branchName = edtBranchName.text.toString(),
+            documentInputs = if (docInputs.isEmpty()) null else docInputs
         )
-
-        firestore.collection("users")
-            .add(user)
-            .addOnSuccessListener {
-                progressDialog.dismiss()
-
-                AlertDialog.Builder(this)
-                    .setTitle("Success")
-                    .setMessage("User registered successfully!")
-                    .setCancelable(false)
-                    .setPositiveButton("OK") { d, _ ->
-                        d.dismiss()
-                        finish()
-                    }.show()
-            }
-            .addOnFailureListener { e ->
-                progressDialog.dismiss()
-                AlertDialog.Builder(this)
-                    .setTitle("Error")
-                    .setMessage("Failed to register user: ${e.message}")
-                    .setPositiveButton("OK", null)
-                    .show()
-            }
-    }
-
-    private fun loadingDialog(msg: String): AlertDialog {
-        return AlertDialog.Builder(this)
-            .setTitle(msg)
-            .setMessage("Please wait…")
-            .setCancelable(false)
-            .create()
     }
 }
