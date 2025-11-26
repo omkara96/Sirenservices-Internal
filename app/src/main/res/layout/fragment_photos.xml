@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="12dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- ============================
+                 VEHICLE PHOTO GRID (2 per row)
+                 ============================ -->
+
+            <TextView
+                android:text="Vehicle Photos"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <!-- Row 1 -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:weightSum="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Front Photo -->
+                <include
+                    android:id="@+id/layoutFront"
+                    layout="@layout/layout_photo_item"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+
+                <!-- Left Photo -->
+                <include
+                    android:id="@+id/layoutLeft"
+                    layout="@layout/layout_photo_item"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <!-- Row 2 -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:weightSum="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Right Photo -->
+                <include
+                    android:id="@+id/layoutRight"
+                    layout="@layout/layout_photo_item"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+
+                <!-- Back Photo -->
+                <include
+                    android:id="@+id/layoutBack"
+                    layout="@layout/layout_photo_item"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <!-- Single Center Extra Photo -->
+            <include
+                android:id="@+id/layoutExtra"
+                layout="@layout/layout_photo_item"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+
+            <!-- ============================
+                 DOCUMENT UPLOAD SECTION
+                 ============================ -->
+
+            <TextView
+                android:text="Document Photos"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <!-- RC -->
+            <include
+                android:id="@+id/layoutRcDoc"
+                layout="@layout/layout_doc_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!-- Insurance -->
+            <include
+                android:id="@+id/layoutInsDoc"
+                layout="@layout/layout_doc_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!-- PUC -->
+            <include
+                android:id="@+id/layoutPucDoc"
+                layout="@layout/layout_doc_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!-- Permit -->
+            <include
+                android:id="@+id/layoutPermitDoc"
+                layout="@layout/layout_doc_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!-- Fitness -->
+            <include
+                android:id="@+id/layoutFitnessDoc"
+                layout="@layout/layout_doc_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!-- OTHER DOC -->
+            <TextView
+                android:text="Other Document"
+                android:layout_marginTop="20dp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/edtOtherDocName"
+                android:hint="Specify Document Type"
+                android:layout_marginTop="6dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <include
+                android:id="@+id/layoutOtherDoc"
+                layout="@layout/layout_doc_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="80dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+    <!-- Floating Buttons -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnPrev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/ic_arrow_back"
+        app:tint="@android:color/white"
+        app:backgroundTint="?attr/colorPrimary"
+        android:layout_gravity="bottom|start"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="50dp"
+        app:backgroundTint="?attr/colorPrimary"
+        app:tint="@android:color/white"
+        android:src="@drawable/ic_arrow_forward"
+        android:layout_gravity="bottom|end"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Label for each vehicle photo -->
+    <TextView
+        android:id="@+id/txtLabel"
+        android:text="Photo"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/imgPhoto"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:scaleType="centerCrop"
+        android:background="#D6D6D6" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnUploadPhoto"
+        android:layout_marginTop="4dp"
+        android:text="Upload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

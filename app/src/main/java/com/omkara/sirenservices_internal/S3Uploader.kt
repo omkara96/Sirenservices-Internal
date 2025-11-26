@@ -65,23 +65,28 @@ object S3Uploader {
         return uploadBytes(bytes, path, "image/jpeg")
     }
 
-    /** Upload a user document: aadharFront, pan, passbook etc. */
-    suspend fun uploadDocument(userId: String, docKey: String, stream: InputStream): String {
-        val file = "${docKey}_${UUID.randomUUID()}.jpg"
-        val path = "users/$userId/documents/$file"
+
+
+
+    suspend fun uploadAmbulancePhoto(vehicleId: String, fileName: String, stream: InputStream): String {
+        val path = "uploads/ambulance/$vehicleId/photos/$fileName"
         val bytes = readBytes(stream)
         return uploadBytes(bytes, path, "image/jpeg")
     }
 
-    /** Upload ambulance photo: left, right, front, rear, interior */
-    suspend fun uploadAmbulancePhoto(
+    /** Upload any ambulance DOCUMENT with a fixed file name */
+    suspend fun uploadAmbulanceDocument(
         ambulanceId: String,
-        side: String,
+        fileName: String,     // example: "doc_rc.jpg"
         stream: InputStream
-    ): String {
-        val file = "${side}_${UUID.randomUUID()}.jpg"
-        val path = "ambulance/$ambulanceId/photos/$file"
+    ): String = withContext(Dispatchers.IO) {
+
+        val path = "uploads/ambulance/$ambulanceId/documents/$fileName"
         val bytes = readBytes(stream)
-        return uploadBytes(bytes, path, "image/jpeg")
+
+        uploadBytes(bytes, path, "image/jpeg")
     }
+
+
+
 }
