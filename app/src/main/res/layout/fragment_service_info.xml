@@ -24,10 +24,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- INSURANCE HEADER -->
+            <com.google.android.material.textview.MaterialTextView
+                android:text="Last Servicing Details (Optional can be skippe)"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
             <!-- Last Service Date -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/lytLastServiceDate"
                 android:layout_marginTop="8dp"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_calendar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Last Service Date">

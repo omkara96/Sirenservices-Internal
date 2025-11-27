@@ -108,7 +108,11 @@ class ServiceInfo : Fragment() {
         }
 
         btnNext.setOnClickListener {
-            if (validate()) {
+            if(edtLastServiceDate.text.isNullOrBlank()){
+                saveToViewModel()
+                (activity as VehicleRegistrationActivity).nextStep()
+            }
+            else if (validate()) {
                 saveToViewModel()
                 (activity as VehicleRegistrationActivity).nextStep()
             }

@@ -14,7 +14,7 @@ class VehicleRegistrationActivity : AppCompatActivity() {
 
     private val vm: VehicleViewModel by viewModels()
     private lateinit var pager: ViewPager2
-
+    private lateinit var tabs : TabLayout
     private val tabTitles = arrayOf("Info", "Compliance", "Service", "Photos", "Review")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +25,17 @@ class VehicleRegistrationActivity : AppCompatActivity() {
         val adapter = VehiclePagerAdapter(this)
         pager.adapter = adapter
         pager.offscreenPageLimit = 1
+        pager.isUserInputEnabled = false
+
+        tabs = findViewById<TabLayout>(R.id.tabLayout)
+
+        TabLayoutMediator(tabs, pager) { tab, pos ->
+            tab.text = tabTitles[pos]
+        }.attach()
+
+// ❌ Disable clicking on Tabs
+        tabs.touchables.forEach { it.isEnabled = false }
+
 
         val tabs = findViewById<TabLayout>(R.id.tabLayout)
         TabLayoutMediator(tabs, pager) { tab, pos ->

@@ -2,6 +2,7 @@ package com.omkara.sirenservices_internal.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,19 +14,17 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omkara.sirenservices_internal.R
-import com.omkara.sirenservices_internal.loginsignup.VehicleRegistrationActivity
 import com.omkara.sirenservices_internal.viewmodels.VehicleViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.tasks.await
 
 class ReviewStepFragment : Fragment() {
 
     private val vm: VehicleViewModel by activityViewModels()
 
     private lateinit var btnSave: FloatingActionButton
-
     private lateinit var txtVehicle: TextView
     private lateinit var txtCompliance: TextView
     private lateinit var txtService: TextView
@@ -37,35 +36,31 @@ class ReviewStepFragment : Fragment() {
 
         val v = inflater.inflate(R.layout.fragment_review_step, container, false)
 
-        bindViews(v)
-        fillData()
+        bind(v)
+        fillReviewData()
 
-        btnSave.setOnClickListener { saveToFirestore() }
+        btnSave.setOnClickListener { trySaveVehicle() }
 
         return v
     }
 
-    private fun bindViews(v: View) {
+    private fun bind(v: View) {
         btnSave = v.findViewById(R.id.btnSave)
-
         txtVehicle = v.findViewById(R.id.txtReview)
         txtCompliance = v.findViewById(R.id.txtcmpl)
         txtService = v.findViewById(R.id.txtser)
         txtPhotos = v.findViewById(R.id.txtphoto)
     }
 
-    /** ---------------------------------------------------------
-     *  DISPLAY ALL DATA FROM VIEWMODEL
-     *  --------------------------------------------------------- */
-    private fun fillData() {
+    private fun fillReviewData() {
 
         txtVehicle.text = """
             • Vehicle No: ${vm.vehicleNumber.value}
             • RC No: ${vm.rcNumber.value}
-            • Make / Model: ${vm.make.value} / ${vm.model.value}
+            • Make/Model: ${vm.make.value} / ${vm.model.value}
             • Year: ${vm.manufactureYear.value}
             • Seats: ${vm.seatingCapacity.value}
-            • Odometer At Registration: ${vm.odometerAtRegistration}
+            • Odometer (Reg): ${vm.odometerAtRegistration}
         """.trimIndent()
 
         txtCompliance.text = """
@@ -82,7 +77,7 @@ class ReviewStepFragment : Fragment() {
 
             OTHER
             • RC Expiry: ${vm.rcExpiryDate.value}
-            • Permit Number: ${vm.permitNumber.value}
+            • Permit No: ${vm.permitNumber.value}
             • Permit Expiry: ${vm.permitExpiry.value}
             • Fitness Expiry: ${vm.fitnessExpiry.value}
         """.trimIndent()
@@ -91,45 +86,56 @@ class ReviewStepFragment : Fragment() {
             • Last Service Date: ${vm.lastServiceDate}
             • Last Service Odo: ${vm.lastServiceOdometer}
             • Workshop: ${vm.lastServiceWorkshop}
-            • Next Service Due KM: ${vm.nextServiceDueKm}
+            • Next Service: ${vm.nextServiceDueKm} KM
         """.trimIndent()
 
-        val map = vm.photos.value ?: emptyMap()
+        val payload: MutableMap<String, Any?> = vm.getFinalPayload().toMutableMap()
+        val photos: Map<String, String> = vm.photos.value ?: emptyMap()
 
-        txtPhotos.text = """
-            VEHICLE PHOTOS:
-            • Front: ${map["photo_front"]}
-            • Left: ${map["photo_left"]}
-            • Right: ${map["photo_right"]}
-            • Back: ${map["photo_back"]}
-            • Extra: ${map["photo_extra"]}
+        Log.d("PHOTOFRAG->R", photos.toString())
 
-            DOCUMENTS:
-            • RC: ${map["doc_rc"]}
-            • Insurance: ${map["doc_insurance"]}
-            • PUC: ${map["doc_puc"]}
-            • Permit: ${map["doc_permit"]}
-            • Fitness: ${map["doc_fitness"]}
-            • Other: ${map["doc_other"]}
-        """.trimIndent()
+        txtPhotos.text = buildString {
+            appendLine("Uploaded Photos:")
+            appendLine("• Front: ${photos["photo_front"]}")
+            appendLine("• Back: ${photos["photo_back"]}")
+            appendLine("• Left: ${photos["photo_left"]}")
+            appendLine("• Right: ${photos["photo_right"]}")
+            appendLine("• Extra: ${photos["photo_extra"]}")
+            appendLine("• RC: ${photos["doc_rc"]}")
+            appendLine("• Insurance: ${photos["doc_insurance"]}")
+            appendLine("• PUC: ${photos["doc_puc"]}")
+            appendLine("• Permit: ${photos["doc_permit"]}")
+            appendLine("• Fitness: ${photos["doc_fitness"]}")
+            appendLine("• Other Doc: ${photos["doc_other"]}")
+        }
+
     }
 
-    /** ---------------------------------------------------------
-     *  SAVE FINAL VEHICLE RECORD TO FIRESTORE
-     *  --------------------------------------------------------- */
-    private fun saveToFirestore() {
+    private fun validateBeforeSave(): Boolean {
+
+        if (vm.vehicleNumber.value.isNullOrBlank()) {
+            Toast.makeText(requireContext(), "Vehicle number missing!", Toast.LENGTH_SHORT).show()
+            return false
+        }
 
         val photos = vm.photos.value ?: emptyMap()
 
-        // Validation: Required URLs
         if (!photos.containsKey("photo_front")) {
-            Toast.makeText(requireContext(), "Front photo missing!", Toast.LENGTH_SHORT).show()
-            return
+            Toast.makeText(requireContext(), "Front photo required!", Toast.LENGTH_SHORT).show()
+            return false
         }
+
         if (!photos.containsKey("doc_rc")) {
-            Toast.makeText(requireContext(), "RC Document missing!", Toast.LENGTH_SHORT).show()
-            return
+            Toast.makeText(requireContext(), "RC Document required!", Toast.LENGTH_SHORT).show()
+            return false
         }
+
+        return true
+    }
+
+    private fun trySaveVehicle() {
+
+        if (!validateBeforeSave()) return
 
         val dialog = AlertDialog.Builder(requireContext())
             .setCancelable(false)
@@ -137,44 +143,39 @@ class ReviewStepFragment : Fragment() {
             .create()
         dialog.show()
 
-        val vehicleId = vm.vehicleNumber.value ?: "VEH_${System.currentTimeMillis()}"
-        val db = FirebaseFirestore.getInstance()
+        val payload: MutableMap<String, Any?> = vm.getFinalPayload().toMutableMap()
+        payload["photos"] = vm.photos.value ?: emptyMap<String, String>()
+        payload["vehicle_id"] = vm.vehicleNumber.value
 
-        val finalPayload = vm.getFinalPayload().toMutableMap()
-        finalPayload["photos"] = photos
-        finalPayload["vehicle_id"] = vehicleId
+        val vehicleId = vm.vehicleNumber.value!!.trim()
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                db.collection("vehicles")
+                FirebaseFirestore.getInstance()
+                    .collection("vehicles")
                     .document(vehicleId)
-                    .set(finalPayload)
+                    .set(payload)
                     .await()
 
                 withContext(Dispatchers.Main) {
                     dialog.dismiss()
-
-                    AlertDialog.Builder(requireContext())
-                        .setTitle("Success")
-                        .setMessage("Vehicle registered successfully!")
-                        .setPositiveButton("OK") { _, _ ->
-                            activity?.finish()
-                        }
-                        .show()
+                    showSuccess()
                 }
 
             } catch (e: Exception) {
-
                 withContext(Dispatchers.Main) {
                     dialog.dismiss()
-
-                    AlertDialog.Builder(requireContext())
-                        .setTitle("Error")
-                        .setMessage("Firestore error: ${e.message}")
-                        .setPositiveButton("OK", null)
-                        .show()
+                    Toast.makeText(requireContext(), "Save failed: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
+    }
+
+    private fun showSuccess() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Success")
+            .setMessage("Vehicle registered successfully!")
+            .setPositiveButton("OK") { _, _ -> activity?.finish() }
+            .show()
     }
 }

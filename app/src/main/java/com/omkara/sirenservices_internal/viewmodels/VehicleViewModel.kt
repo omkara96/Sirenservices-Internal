@@ -135,11 +135,13 @@ class VehicleViewModel : ViewModel() {
     // -------------------------------
     // helper methods for photos
     // -------------------------------
-    fun setPhoto(key: String, uri: String) {
-        val map = photos.value ?: mutableMapOf()
-        map[key] = uri
-        photos.postValue(map)
+
+    fun setPhoto(key: String, url: String) {
+        val updated = photos.value?.toMutableMap() ?: mutableMapOf()
+        updated[key] = url
+        photos.postValue(updated)
     }
+
 
     fun getPhoto(key: String): String? {
         return photos.value?.get(key)
