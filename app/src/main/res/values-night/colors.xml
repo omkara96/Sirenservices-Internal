@@ -146,5 +146,9 @@
     <color name="att_half_yellow">#FFC107</color>
     <color name="att_leave_blue">#2196F3</color>
     <color name="att_holiday_teal">#009688</color>
+    <color name="status_active">#4CAF50</color> <!-- Green -->
+    <color name="status_inactive">#9E9E9E</color> <!-- Grey -->
+    <color name="status_maintenance">#FFC107</color> <!-- Amber -->
+
 
 </resources>

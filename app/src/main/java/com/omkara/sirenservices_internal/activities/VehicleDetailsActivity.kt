@@ -1,147 +1,133 @@
 package com.omkara.sirenservices_internal.activities
 
-import android.app.AlertDialog
-import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.*
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.firestore.FieldValue
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.Chip
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omkara.sirenservices_internal.R
-import com.omkara.sirenservices_internal.models.VehicleModel
+import com.omkara.sirenservices_internal.adapter.VehicleDetailPagerAdapter
 
 class VehicleDetailsActivity : AppCompatActivity() {
 
-    private lateinit var tvNumber: TextView
-    private lateinit var tvMakeModel: TextView
-    private lateinit var tvType: TextView
-    private lateinit var tvStatus: TextView
-    private lateinit var tvOdometer: TextView
-    private lateinit var tvChassis: TextView
-    private lateinit var tvEngine: TextView
-    private lateinit var btnUpdateOdometer: Button
-    private lateinit var btnAddService: Button
-    private lateinit var btnViewServices: Button
-    private lateinit var progress: ProgressBar
+    private lateinit var toolbar: MaterialToolbar
+    private lateinit var tvVehNumber: TextView
+    private lateinit var tvVehMakeModel: TextView
+    private lateinit var chipStatus: Chip
+    private lateinit var btnChangeStatus: MaterialButton
 
-    private val db = FirebaseFirestore.getInstance()
-    private var vehicleId: String = ""
+    private lateinit var tabLayout: TabLayout
+    private lateinit var viewPager: ViewPager2
 
-    private lateinit var progressDialog: AlertDialog
+    private lateinit var adapter: VehicleDetailPagerAdapter
+
+    private val firestore = FirebaseFirestore.getInstance()
+    private var vehicleId = ""
+
+    private val statusOptions = arrayOf(
+        "ACTIVE", "INACTIVE", "UNDER_MAINTENANCE"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_vehicle_details)
 
-        tvNumber = findViewById(R.id.tvNumber)
-        tvMakeModel = findViewById(R.id.tvMakeModel)
-        tvType = findViewById(R.id.tvType)
-        tvStatus = findViewById(R.id.tvStatus)
-        tvOdometer = findViewById(R.id.tvOdometer)
-        tvChassis = findViewById(R.id.tvChassis)
-        tvEngine = findViewById(R.id.tvEngine)
-        btnUpdateOdometer = findViewById(R.id.btnUpdateOdometer)
-        btnAddService = findViewById(R.id.btnAddService)
-        btnViewServices = findViewById(R.id.btnViewServices)
-        progress = findViewById(R.id.progress)
-
         vehicleId = intent.getStringExtra("vehicle_id") ?: ""
-        if (vehicleId.isEmpty()) {
-            Toast.makeText(this, "Vehicle id missing", Toast.LENGTH_SHORT).show()
-            finish()
-            return
-        }
 
-        progressDialog = AlertDialog.Builder(this)
-            .setView(R.layout.dialog_progress)
-            .setCancelable(false)
-            .create()
+        bindViews()
+        setupToolbar()
+        setupViewPager()
+        loadVehicleDetails()
 
-        loadVehicle()
-
-        btnUpdateOdometer.setOnClickListener { showUpdateOdometerDialog() }
-        btnAddService.setOnClickListener {
-            Toast.makeText(this, "Add service clicked and vehicle id is: " + vehicleId.toString().trim(), Toast.LENGTH_SHORT).show()
-            val i = Intent(this, AddServiceRecordActivity::class.java)
-            i.putExtra("vehicle_id", vehicleId)
-            startActivity(i)
-        }
-        btnViewServices.setOnClickListener {
-            val i = Intent(this, ServiceHistoryActivity::class.java)
-            i.putExtra("vehicle_id", vehicleId)
-            startActivity(i)
-        }
+        btnChangeStatus.setOnClickListener { showStatusDialog() }
     }
 
-    private fun loadVehicle() {
-        progress.visibility = View.VISIBLE
-        db.collection("vehicles").document(vehicleId)
-            .addSnapshotListener { snap, err ->
-                progress.visibility = View.GONE
-                if (err != null) {
-                    Toast.makeText(this, "Error: ${err.message}", Toast.LENGTH_LONG).show()
-                    return@addSnapshotListener
-                }
-                if (snap != null && snap.exists()) {
-                    val vm = snap.toObject(VehicleModel::class.java)
-                    tvNumber.text = vm?.vehicle_number ?: "-"
-                    tvMakeModel.text = "${vm?.make ?: ""} ${vm?.model ?: ""}"
-                    tvType.text = vm?.vehicle_type ?: ""
-                    tvStatus.text = vm?.status ?: ""
-                    val odo = vm?.last_service_odometer ?: vm?.odometer_at_registration
-                    tvOdometer.text = "Odometer: ${odo?.toString() ?: "-"}"
-                    tvChassis.text = "Chassis: ${vm?.chassis_number ?: "-"}"
-                    tvEngine.text = "Engine: ${vm?.engine_number ?: "-"}"
-                }
+    private fun bindViews() {
+        toolbar = findViewById(R.id.toolbar)
+        tvVehNumber = findViewById(R.id.tvVehNumber)
+        tvVehMakeModel = findViewById(R.id.tvVehMakeModel)
+        chipStatus = findViewById(R.id.chipStatus)
+        btnChangeStatus = findViewById(R.id.btnChangeStatus)
+        tabLayout = findViewById(R.id.tabLayout)
+        viewPager = findViewById(R.id.viewPager)
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { finish() }
+    }
+
+    private fun setupViewPager() {
+        adapter = VehicleDetailPagerAdapter(this, vehicleId)
+        viewPager.adapter = adapter
+
+        TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
+            tab.text = when (pos) {
+                0 -> "Info"
+                1 -> "Compliance"
+                2 -> "Service"
+                3 -> "Revenue"
+                4 -> "Documents"
+                else -> "Tab"
+            }
+        }.attach()
+    }
+
+    private fun loadVehicleDetails() {
+        firestore.collection("vehicles")
+            .document(vehicleId)
+            .get()
+            .addOnSuccessListener { doc ->
+
+                val number = doc.getString("vehicle_number") ?: ""
+                val make = doc.getString("make") ?: ""
+                val model = doc.getString("model") ?: ""
+                val status = doc.getString("status") ?: "ACTIVE"
+
+                tvVehNumber.text = number
+                tvVehMakeModel.text = "$make • $model"
+
+                setStatusChip(status)
             }
     }
 
-    private fun showUpdateOdometerDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Update Odometer")
+    private fun setStatusChip(status: String) {
+        chipStatus.text = status
 
-        val view = LayoutInflater.from(this).inflate(R.layout.dialog_update_odometer, null)
-        val edtOdo = view.findViewById<EditText>(R.id.edtOdometer)
-        builder.setView(view)
-
-        builder.setPositiveButton("Save") { d, _ ->
-            val newOdo = edtOdo.text.toString().trim().toDoubleOrNull()
-            if (newOdo == null) {
-                Toast.makeText(this, "Enter valid number", Toast.LENGTH_SHORT).show()
-                return@setPositiveButton
-            }
-            updateOdometer(newOdo)
-            d.dismiss()
+        val color = when (status) {
+            "ACTIVE" -> getColor(R.color.status_active)
+            "INACTIVE" -> getColor(R.color.status_inactive)
+            "UNDER_MAINTENANCE" -> getColor(R.color.status_maintenance)
+            else -> getColor(R.color.status_inactive)
         }
 
-        builder.setNegativeButton("Cancel") { d, _ -> d.dismiss() }
-        builder.show()
+        chipStatus.setChipBackgroundColor(ColorStateList.valueOf(color))
+        chipStatus.setTextColor(Color.WHITE)
     }
 
-    private fun updateOdometer(newOdo: Double) {
-        progressDialog.show()
-        val vehicleRef = db.collection("vehicles").document(vehicleId)
 
-        // transaction to update odometer and optionally next_service_due_km logic
-        db.runTransaction { tr ->
-            val snap = tr.get(vehicleRef)
-            val currentLastServiceOdo = snap.getDouble("last_service_odometer") ?: snap.getDouble("odometer_at_registration") ?: 0.0
-            if (newOdo < currentLastServiceOdo) {
-                throw Exception("New odometer ($newOdo) cannot be less than current recorded ($currentLastServiceOdo)")
+    private fun showStatusDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Change Vehicle Status")
+            .setItems(statusOptions) { _, index ->
+                updateStatus(statusOptions[index])
             }
-            tr.update(vehicleRef, mapOf<String, Any>(
-                "odometer_at_registration" to newOdo,
-                "last_service_odometer" to newOdo,
-                "updated_at" to FieldValue.serverTimestamp()
-            ))
-        }.addOnSuccessListener {
-            progressDialog.dismiss()
-            Toast.makeText(this, "Odometer updated", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener { e ->
-            progressDialog.dismiss()
-            Toast.makeText(this, "Update failed: ${e.message}", Toast.LENGTH_LONG).show()
-        }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun updateStatus(newStatus: String) {
+        firestore.collection("vehicles")
+            .document(vehicleId)
+            .update("status", newStatus)
+            .addOnSuccessListener { setStatusChip(newStatus) }
     }
 }
