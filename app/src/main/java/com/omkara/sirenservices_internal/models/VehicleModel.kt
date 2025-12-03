@@ -1,7 +1,9 @@
 package com.omkara.sirenservices_internal.models
 
+import com.google.firebase.Timestamp
 
 data class VehicleModel(
+
     val vehicle_number: String = "",
     val vehicle_type: String = "",
     val make: String = "",
@@ -17,22 +19,8 @@ data class VehicleModel(
     val chassis_number: String = "",
     val engine_number: String = "",
 
-    // insurance
-    val insurance_provider: String = "",
-    val insurance_number: String = "",
-    val insurance_start: String? = null,
-    val insurance_end: String? = null,
-
-    // PUC
-    val puc_number: String = "",
-    val puc_start: String? = null,
-    val puc_end: String? = null,
-
-    // fitness & permit
-    val fitness_number: String = "",
-    val fitness_expiry: String? = null,
-    val permit_number: String = "",
-    val permit_expiry: String? = null,
+    // New unified compliance structure
+    val compliance: ComplianceModel = ComplianceModel(),
 
     // service
     val last_service_date: String? = null,
@@ -41,6 +29,6 @@ data class VehicleModel(
     val last_service_notes: String? = null,
     val next_service_due_km: Double? = null,
 
-    val created_at: com.google.firebase.Timestamp? = null,
-    val updated_at: com.google.firebase.Timestamp? = null
+    val created_at: Timestamp? = null,
+    val updated_at: Timestamp? = null
 )

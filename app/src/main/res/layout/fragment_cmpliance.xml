@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- SCROLL AREA -->
+
+    <!-- FULL SCROLL AREA -->
     <ScrollView
         android:id="@+id/scrollCompliance"
         android:layout_width="0dp"
@@ -23,38 +24,201 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- INSURANCE HEADER -->
+            <!-- ======================================================== -->
+            <!-- ===================== INSURANCE ======================== -->
+            <!-- ======================================================== -->
+
             <com.google.android.material.textview.MaterialTextView
                 android:text="Insurance"
-                android:textSize="16sp"
                 android:textStyle="bold"
+                android:textSize="18sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <!-- Provider -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/lytInsuranceProvider"
-                android:layout_marginTop="8dp"
                 android:hint="Insurance Provider"
+                android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtInsuranceProvider"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Policy -->
+            <!-- Certificate No -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytInsuranceCertificateNo"
+                android:hint="Insurance Certificate Number"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtInsuranceCertificateNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Policy Number -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/lytInsuranceNumber"
-                android:layout_marginTop="8dp"
                 android:hint="Insurance Policy Number"
+                android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtInsuranceNumber"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Insurance Type -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytInsuranceType"
+                android:hint="Insurance Type (Comprehensive / 3rd Party)"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtInsuranceType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Premium -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytInsurancePremium"
+                android:hint="Insurance Premium"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtInsurancePremium"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Insurance Dates -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Start -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/lytInsuranceStart"
+                    android:layout_weight="1"
+                    android:hint="Valid From"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/ic_calendar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtInsuranceStart"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- End -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/lytInsuranceEnd"
+                    android:layout_weight="1"
+                    android:hint="Valid Till"
+                    android:layout_marginStart="8dp"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/ic_calendar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtInsuranceEnd"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <!-- Upload Insurance PDF -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUploadInsurancePdf"
+                android:text="Upload Insurance Document (PDF)"
+                android:icon="@drawable/ic_upload"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            <!-- ======================================================== -->
+            <!-- ======================== PUC =========================== -->
+            <!-- ======================================================== -->
+
+            <com.google.android.material.textview.MaterialTextView
+                android:text="PUC"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <!-- Provider -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytPucProvider"
+                android:hint="PUC Issued By"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPucProvider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Certificate No -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytPucCertificateNo"
+                android:hint="PUC Certificate Number"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPucCertificateNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Number -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytPucNumber"
+                android:hint="PUC Number"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPucNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Premium -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytPucPremium"
+                android:hint="PUC Premium"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPucPremium"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Dates -->
@@ -65,64 +229,136 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <!-- Start -->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/lytInsuranceStart"
-                    android:hint="Insurance Start"
-                    android:layout_width="0dp"
+                    android:id="@+id/lytPucStart"
+                    android:layout_weight="1"
+                    android:hint="Valid From"
                     app:endIconMode="custom"
                     app:endIconDrawable="@drawable/ic_calendar"
-                    android:layout_weight="1"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content">
+
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edtInsuranceStart"
+                        android:id="@+id/edtPucStart"
                         android:focusable="false"
                         android:clickable="true"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
+
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- End -->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/lytInsuranceEnd"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/lytPucEnd"
+                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
+                    android:hint="Valid Till"
                     app:endIconMode="custom"
                     app:endIconDrawable="@drawable/ic_calendar"
-                    android:layout_weight="1"
-                    android:hint="Insurance Expiry">
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edtInsuranceEnd"
+                        android:id="@+id/edtPucEnd"
                         android:focusable="false"
                         android:clickable="true"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
+
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
-            <!-- PUC HEADER -->
-            <com.google.android.material.textview.MaterialTextView
-                android:text="PUC"
-                android:textSize="16sp"
-                android:layout_marginTop="12dp"
-                android:textStyle="bold"
+            <!-- Upload PUC PDF -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUploadPucPdf"
+                android:text="Upload PUC Document (PDF)"
+                android:icon="@drawable/ic_upload"
+                android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
-            <!-- PUC Number -->
+
+            <!-- ======================================================== -->
+            <!-- ======================== PERMIT ======================== -->
+            <!-- ======================================================== -->
+
+            <com.google.android.material.textview.MaterialTextView
+                android:text="Permit"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <!-- Provider -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/lytPucNumber"
+                android:id="@+id/lytPermitProvider"
+                android:hint="Permit Issued By (RTO)"
                 android:layout_marginTop="8dp"
-                android:hint="PUC Number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtPucNumber"
+                    android:id="@+id/edtPermitProvider"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- PUC Dates -->
+            <!-- Certificate No -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytPermitCertificateNo"
+                android:hint="Permit Certificate Number"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPermitCertificateNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Number -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytPermitNumber"
+                android:hint="Permit Number"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPermitNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Type -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytPermitType"
+                android:hint="Permit Type (National / State / Tourist)"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPermitType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Premium -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytPermitPremium"
+                android:hint="Permit Premium / Fees"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPermitPremium"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Permit Dates -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:weightSum="2"
@@ -130,97 +366,201 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <!-- Start -->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/lytPucStart"
-                    android:layout_width="0dp"
+                    android:id="@+id/lytPermitStart"
                     android:layout_weight="1"
-                    android:hint="PUC Start"
+                    android:hint="Valid From"
                     app:endIconMode="custom"
                     app:endIconDrawable="@drawable/ic_calendar"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content">
+
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edtPucStart"
+                        android:id="@+id/edtPermitStart"
                         android:focusable="false"
                         android:clickable="true"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
+
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Expiry -->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/lytPucEnd"
-                    android:layout_width="0dp"
+                    android:id="@+id/lytPermitExpiry"
                     android:layout_weight="1"
+                    android:hint="Valid Till"
                     android:layout_marginStart="8dp"
-                    android:hint="PUC Expiry"
                     app:endIconMode="custom"
                     app:endIconDrawable="@drawable/ic_calendar"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content">
+
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edtPucEnd"
+                        android:id="@+id/edtPermitExpiry"
                         android:focusable="false"
                         android:clickable="true"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
+
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
-            <!-- PERMIT -->
+            <!-- Upload Permit PDF -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUploadPermitPdf"
+                android:text="Upload Permit Document (PDF)"
+                android:icon="@drawable/ic_upload"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+
+            <!-- ======================================================== -->
+            <!-- ======================== FITNESS ======================= -->
+            <!-- ======================================================== -->
+
+            <com.google.android.material.textview.MaterialTextView
+                android:text="Fitness Certificate"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <!-- Provider -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/lytPermitNumber"
-                android:layout_marginTop="12dp"
-                android:hint="Permit Number"
+                android:id="@+id/lytFitnessProvider"
+                android:hint="Fitness Provider / Issued By"
+                android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtPermitNumber"
+                    android:id="@+id/edtFitnessProvider"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Permit Expiry -->
+            <!-- Certificate No -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/lytPermitExpiry"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:id="@+id/lytFitnessCertificateNo"
+                android:hint="Fitness Certificate Number"
                 android:layout_marginTop="8dp"
-                app:endIconMode="custom"
-                app:endIconDrawable="@drawable/ic_calendar"
-                android:hint="Permit Expiry">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtPermitExpiry"
-                    android:focusable="false"
-                    android:clickable="true"
+                    android:id="@+id/edtFitnessCertificateNo"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Fitness Expiry -->
+            <!-- Fitness Number -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/lytFitnessExpiry"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:id="@+id/lytFitnessNumber"
+                android:hint="Fitness Registration Number"
                 android:layout_marginTop="8dp"
-                app:endIconMode="custom"
-                app:endIconDrawable="@drawable/ic_calendar"
-                android:hint="Fitness Expiry">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtFitnessExpiry"
-                    android:focusable="false"
-                    android:clickable="true"
+                    android:id="@+id/edtFitnessNumber"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Type -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytFitnessType"
+                android:hint="Fitness Type (New / Renewal / Annual)"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtFitnessType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Premium -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytFitnessPremium"
+                android:hint="Fitness Premium / Fees"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtFitnessPremium"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Dates -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Start -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/lytFitnessValidFrom"
+                    android:hint="Valid From"
+                    android:layout_weight="1"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/ic_calendar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtFitnessValidFrom"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- End -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/lytFitnessValidTill"
+                    android:hint="Valid Till"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/ic_calendar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtFitnessValidTill"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <!-- Upload Fitness PDF -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUploadFitnessPdf"
+                android:text="Upload Fitness Document (PDF)"
+                android:icon="@drawable/ic_upload"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            <!-- FOOTER SPACING -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="120dp"/>
+                android:layout_height="150dp" />
 
         </LinearLayout>
 
     </ScrollView>
 
-    <!-- FLOATING PREVIOUS -->
+    <!-- PREVIOUS BUTTON -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnPrev"
         android:src="@drawable/ic_arrow_back"
@@ -231,9 +571,9 @@
         android:layout_marginLeft="25dp"
         android:layout_marginBottom="50dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- FLOATING NEXT -->
+    <!-- NEXT BUTTON -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnNext"
         android:src="@drawable/ic_arrow_forward"
@@ -244,6 +584,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

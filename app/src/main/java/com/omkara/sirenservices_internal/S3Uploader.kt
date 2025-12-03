@@ -84,7 +84,7 @@ object S3Uploader {
         val path = "uploads/ambulance/$ambulanceId/documents/$fileName"
         val bytes = readBytes(stream)
 
-        uploadBytes(bytes, path, "image/jpeg")
+        uploadBytes(bytes, path, "application/pdf")
     }
 
 

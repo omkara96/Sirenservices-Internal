@@ -2,6 +2,8 @@ package com.omkara.sirenservices_internal.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.omkara.sirenservices_internal.models.*
+import com.google.firebase.Timestamp
 
 class VehicleViewModel : ViewModel() {
 
@@ -14,26 +16,27 @@ class VehicleViewModel : ViewModel() {
     val model = MutableLiveData<String>()
     val manufactureYear = MutableLiveData<Int?>()
     val seatingCapacity = MutableLiveData<Int?>()
+    val chassis_number = MutableLiveData<String>()
+    val engine_number = MutableLiveData<String>()
+    val fuelType = MutableLiveData<String>()
+    val transmissionType = MutableLiveData<String>()
+    val vehicleOwnership = MutableLiveData<String>()
 
-    // Odometer captured ONCE during registration
     var odometerAtRegistration: Double? = null
+
     val photos = MutableLiveData<MutableMap<String, String>>(mutableMapOf())
-    // -------------------------------
-    //  COMPLIANCE DATA (STEP 2)
-    // -------------------------------
-    val insuranceProvider = MutableLiveData<String>()
-    val insuranceNumber = MutableLiveData<String>()
-    val insuranceStartDate = MutableLiveData<String?>()
-    val insuranceEndDate = MutableLiveData<String?>()
 
-    val pucNumber = MutableLiveData<String>()
-    val pucStartDate = MutableLiveData<String?>()
-    val pucEndDate = MutableLiveData<String?>()
 
-    val rcExpiryDate = MutableLiveData<String?>()
-    val permitNumber = MutableLiveData<String?>()
-    val permitExpiry = MutableLiveData<String?>()
-    val fitnessExpiry = MutableLiveData<String?>()
+    // -------------------------------
+    //  COMPLIANCE DATA (NEW STRUCTURE)
+    // -------------------------------
+    private val _compliance = MutableLiveData<ComplianceModel>()
+    val compliance: MutableLiveData<ComplianceModel> get() = _compliance
+
+
+    fun updateComplianceInfo(model: ComplianceModel) {
+        _compliance.value = model
+    }
 
 
     // -------------------------------
@@ -56,26 +59,11 @@ class VehicleViewModel : ViewModel() {
         manufactureYear.value = data["manufacture_year"] as? Int
         seatingCapacity.value = data["seating_capacity"] as? Int
         odometerAtRegistration = data["odometer_at_registration"] as? Double
-    }
-
-
-    // -------------------------------
-    // FUNCTIONS TO UPDATE STEP 2
-    // -------------------------------
-    fun updateComplianceInfo(data: Map<String, Any?>) {
-        insuranceProvider.value = data["insurance_provider"] as? String
-        insuranceNumber.value = data["insurance_number"] as? String
-        insuranceStartDate.value = data["insurance_start"] as? String
-        insuranceEndDate.value = data["insurance_end"] as? String
-
-        pucNumber.value = data["puc_number"] as? String
-        pucStartDate.value = data["puc_start"] as? String
-        pucEndDate.value = data["puc_end"] as? String
-
-        rcExpiryDate.value = data["rc_expiry"] as? String
-        permitNumber.value = data["permit_number"] as? String
-        permitExpiry.value = data["permit_expiry"] as? String
-        fitnessExpiry.value = data["fitness_expiry"] as? String
+        chassis_number.value = data["chassis_number"] as? String
+        engine_number.value = data["engine_number"] as? String
+        fuelType.value = data["fuel_type"] as? String
+        transmissionType.value = data["transmission"] as? String
+        vehicleOwnership.value = data["owner_type"] as? String
     }
 
 
@@ -91,13 +79,13 @@ class VehicleViewModel : ViewModel() {
 
 
     // -------------------------------
-    // FINAL PAYLOAD FOR FIRESTORE
+    // FINAL FIRESTORE PAYLOAD
     // -------------------------------
     fun getFinalPayload(): Map<String, Any?> {
 
         val payload = HashMap<String, Any?>()
 
-        // Vehicle Info
+        // Basic Vehicle Info
         payload["vehicle_number"] = vehicleNumber.value
         payload["rc_number"] = rcNumber.value
         payload["make"] = make.value
@@ -105,47 +93,41 @@ class VehicleViewModel : ViewModel() {
         payload["manufacture_year"] = manufactureYear.value
         payload["seating_capacity"] = seatingCapacity.value
         payload["odometer_at_registration"] = odometerAtRegistration
+        payload["chassis_number"] = chassis_number.value
+        payload["engine_number"] = engine_number.value
+        payload["transmission"] = transmissionType.value
+        payload["fuel_type"] = fuelType.value
+        payload["owner_type"] = vehicleOwnership.value
 
-        // Compliance
-        payload["insurance_provider"] = insuranceProvider.value
-        payload["insurance_number"] = insuranceNumber.value
-        payload["insurance_start"] = insuranceStartDate.value
-        payload["insurance_end"] = insuranceEndDate.value
+        // PHOTOS
+        payload["photos"] = photos.value
 
-        payload["puc_number"] = pucNumber.value
-        payload["puc_start"] = pucStartDate.value
-        payload["puc_end"] = pucEndDate.value
+        // COMPLIANCE (full new model)
+        payload["compliance"] = _compliance.value ?: ComplianceModel()
 
-        payload["rc_expiry"] = rcExpiryDate.value
-        payload["permit_number"] = permitNumber.value
-        payload["permit_expiry"] = permitExpiry.value
-        payload["fitness_expiry"] = fitnessExpiry.value
-
-        // Service
+        // SERVICE INFO
         payload["last_service_date"] = lastServiceDate
         payload["last_service_odometer"] = lastServiceOdometer
         payload["last_service_workshop"] = lastServiceWorkshop
         payload["next_service_due_km"] = nextServiceDueKm
 
-        payload["created_at"] = System.currentTimeMillis()
+        payload["created_at"] = Timestamp.now()
+        payload["updated_at"] = Timestamp.now()
 
         return payload
     }
 
-    // -------------------------------
-    // helper methods for photos
-    // -------------------------------
 
+    // -------------------------------
+    // PHOTO helpers
+    // -------------------------------
     fun setPhoto(key: String, url: String) {
         val updated = photos.value?.toMutableMap() ?: mutableMapOf()
         updated[key] = url
         photos.postValue(updated)
     }
 
-
-    fun getPhoto(key: String): String? {
-        return photos.value?.get(key)
-    }
+    fun getPhoto(key: String): String? = photos.value?.get(key)
 
     fun clearPhotos() {
         photos.postValue(mutableMapOf())
@@ -157,4 +139,19 @@ class VehicleViewModel : ViewModel() {
         map.putAll(newMap)
         photos.postValue(map)
     }
+
+    // Add inside VehicleViewModel
+
+    val complianceDocuments = MutableLiveData<MutableMap<String, String>>(mutableMapOf())
+
+    fun setComplianceDocument(key: String, url: String) {
+        val map = complianceDocuments.value ?: mutableMapOf()
+        map[key] = url
+        complianceDocuments.postValue(map)
+    }
+
+    fun getComplianceDocument(key: String): String? {
+        return complianceDocuments.value?.get(key)
+    }
+
 }

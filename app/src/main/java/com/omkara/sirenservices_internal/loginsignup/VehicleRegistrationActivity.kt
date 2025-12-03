@@ -15,7 +15,7 @@ class VehicleRegistrationActivity : AppCompatActivity() {
     private val vm: VehicleViewModel by viewModels()
     private lateinit var pager: ViewPager2
     private lateinit var tabs : TabLayout
-    private val tabTitles = arrayOf("Info", "Compliance", "Service", "Photos", "Review")
+    private val tabTitles = arrayOf("Basic Info", "Compliance", "Service n Save")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

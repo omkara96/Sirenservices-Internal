@@ -70,7 +70,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
     implementation("androidx.fragment:fragment-ktx:1.7.0")
     implementation ("com.applandeo:material-calendar-view:1.9.0")
-
-
+    implementation ("com.tbuonomo:dotsindicator:4.3")
 
 }

@@ -4,8 +4,10 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
@@ -87,10 +89,11 @@ class VehicleDetailsActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { doc ->
 
-                val number = doc.getString("vehicle_number") ?: ""
-                val make = doc.getString("make") ?: ""
-                val model = doc.getString("model") ?: ""
-                val status = doc.getString("status") ?: "ACTIVE"
+                val info = doc.get("vehicle_info") as? Map<String, Any> ?: emptyMap()
+                val number = info["vehicle_number"]?.toString() ?: ""
+                val make = info["make"]?: ""
+                val model = info["model"]  ?: ""
+                val status = info["status"].toString() ?: "ACTIVE"
 
                 tvVehNumber.text = number
                 tvVehMakeModel.text = "$make • $model"
@@ -127,7 +130,13 @@ class VehicleDetailsActivity : AppCompatActivity() {
     private fun updateStatus(newStatus: String) {
         firestore.collection("vehicles")
             .document(vehicleId)
-            .update("status", newStatus)
-            .addOnSuccessListener { setStatusChip(newStatus) }
+            .update("vehicle_info.status", newStatus)
+            .addOnSuccessListener {
+                setStatusChip(newStatus)
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to update status", Toast.LENGTH_SHORT).show()
+            }
     }
+
 }

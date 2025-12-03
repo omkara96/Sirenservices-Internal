@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- MAIN SCROLL CONTENT -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:padding="8dp"
+        android:padding="12dp"
         android:fillViewport="true">
 
         <LinearLayout
@@ -18,40 +18,81 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- ========== IMAGES SCROLLER ========== -->
+
+            <!--    PHOTO SLIDER TITLE    -->
+
             <TextView
                 android:text="Vehicle Photos"
                 android:textStyle="bold"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <HorizontalScrollView
+            <!-- PHOTO SLIDER WRAPPER -->
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:scrollbars="none">
+                android:layout_height="260dp">
 
-                <LinearLayout
-                    android:id="@+id/layoutImages"
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                <!-- LEFT ARROW -->
+                <ImageView
+                    android:id="@+id/btnLeft"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_arrow_left"
+                    android:background="@drawable/bg_circle_transparent"
+                    android:visibility="visible"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <!-- VIEWPAGER -->
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/photoPager"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical">
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="40dp"/>
 
-                    <!-- Dynamically injected imageViews here -->
+                <!-- RIGHT ARROW -->
+                <ImageView
+                    android:id="@+id/btnRight"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:background="@drawable/bg_circle_transparent"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:visibility="visible"
+                    android:clickable="true"
+                    android:focusable="true"/>
 
-                </LinearLayout>
-            </HorizontalScrollView>
+            </FrameLayout>
+
+            <!-- Dots Indicator Below -->
+            <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+                android:id="@+id/photoIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp" />
 
 
-            <!-- ========== BASIC DETAILS CARD ========== -->
+
+
+            <!-- ============================= -->
+            <!--        BASIC DETAILS CARD      -->
+            <!-- ============================= -->
             <com.google.android.material.card.MaterialCardView
-                android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardElevation="2dp"
-                app:cardCornerRadius="12dp">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -61,16 +102,16 @@
 
                     <TextView
                         android:text="Basic Details"
-                        android:textStyle="bold"
                         android:textSize="16sp"
+                        android:textStyle="bold"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/txtVehicleNumber"
                         android:text="MH12 XX 0000"
                         android:textSize="15sp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
@@ -78,28 +119,35 @@
                         android:id="@+id/txtMakeModel"
                         android:text="Make • Model"
                         android:textSize="15sp"
-                        android:layout_marginTop="2dp"
+                        android:layout_marginTop="4dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/txtYear"
-                        android:text="Year: 2020"
-                        android:layout_marginTop="2dp"
+                        android:text="Year: -"
+                        android:layout_marginTop="4dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/txtFuel"
-                        android:text="Fuel: Diesel"
-                        android:layout_marginTop="2dp"
+                        android:text="Fuel: -"
+                        android:layout_marginTop="4dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/txtTransmission"
-                        android:text="Transmission: Manual"
-                        android:layout_marginTop="2dp"
+                        android:text="Transmission: -"
+                        android:layout_marginTop="4dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/txtvehicleOwnership"
+                        android:text="Vehicle Ownership: -"
+                        android:layout_marginTop="4dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
@@ -107,38 +155,55 @@
             </com.google.android.material.card.MaterialCardView>
 
 
-            <!-- ========== REGISTRATION DETAILS CARD ========== -->
+
+            <!-- =============================== -->
+            <!--      REGISTRATION DETAILS       -->
+            <!-- =============================== -->
             <com.google.android.material.card.MaterialCardView
-                android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:padding="16dp"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
                         android:text="Registration Details"
-                        android:textStyle="bold"
                         android:textSize="16sp"
+                        android:textStyle="bold"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/txtRcNumber"
+                        android:text="RC No: -"
+                        android:layout_marginTop="4dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/txtChassis"
                         android:text="Chassis No: -"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/txtEngine"
                         android:text="Engine No: -"
-                        android:layout_marginTop="2dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/txtYearSeats"
+                        android:text="Seat Capacity: -"
+                        android:layout_marginTop="4dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
@@ -146,53 +211,59 @@
             </com.google.android.material.card.MaterialCardView>
 
 
-            <!-- ========== ODOMETER CARD ========== -->
+
+            <!-- ================================= -->
+            <!--          ODOMETER CARD             -->
+            <!-- ================================= -->
             <com.google.android.material.card.MaterialCardView
-                android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp">
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:padding="16dp"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
                         android:text="Odometer"
-                        android:textStyle="bold"
                         android:textSize="16sp"
+                        android:textStyle="bold"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/txtOdometer"
                         android:text="0 km"
                         android:textSize="15sp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnUpdateOdometer"
                         android:text="Update Odometer"
-                        android:layout_marginTop="10dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"/>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
 
-            <!-- ========== NOTES / ALERTS ========== -->
+            <!-- =============================== -->
+            <!--        ALERTS & NOTES            -->
+            <!-- =============================== -->
             <com.google.android.material.card.MaterialCardView
-                android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                app:cardElevation="2dp"
+                android:layout_marginBottom="30dp"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:padding="16dp"
@@ -202,15 +273,15 @@
 
                     <TextView
                         android:text="Alerts and Notes"
-                        android:textStyle="bold"
                         android:textSize="16sp"
+                        android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/txtAlerts"
                         android:text="No alerts"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 

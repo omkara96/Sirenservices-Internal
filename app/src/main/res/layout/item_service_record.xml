@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardService"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    android:elevation="4dp"
-    android:padding="12dp">
+    android:layout_margin="8dp"
+    android:padding="12dp"
+    app:cardElevation="3dp">
 
     <LinearLayout
         android:orientation="vertical"
@@ -13,46 +14,45 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/tvServiceType"
-            android:text="Service Type"
+            android:id="@+id/txtServiceType"
+            android:text="General Service"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@+id/tvDate"
-            android:text="Date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtServiceDate"
+            android:text="10-10-2025"
             android:layout_marginTop="4dp"
-            android:textSize="14sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:textSize="14sp"/>
 
         <TextView
-            android:id="@+id/tvOdometer"
-            android:text="Odometer"
-            android:layout_marginTop="2dp"
-            android:textSize="14sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtServiceOdometer"
+            android:text="Odometer: 12345 km"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"/>
 
         <TextView
-            android:id="@+id/tvCost"
-            android:text="Cost"
-            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtServiceCost"
+            android:text="Cost: ₹1200"
             android:layout_marginTop="4dp"
             android:textSize="15sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/tvNotes"
-            android:text="Notes"
-            android:layout_marginTop="6dp"
-            android:textSize="14sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtServiceNotes"
+            android:text="Notes: -"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"/>
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

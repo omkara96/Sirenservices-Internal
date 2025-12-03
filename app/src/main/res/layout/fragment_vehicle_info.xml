@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- SCROLLABLE FORM -->
+    <!-- SCROLL CONTENT -->
     <ScrollView
         android:id="@+id/scrollVehicle"
         android:layout_width="0dp"
@@ -23,36 +23,230 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Vehicle Number -->
+            <!-- ===================================================== -->
+            <!--                VEHICLE NUMBER FIRST                   -->
+            <!-- ===================================================== -->
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/lytVehicleNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Vehicle Number (MH12AB1234)">
+                android:hint="Vehicle Number (MH12AB1234)"
+                android:layout_marginBottom="16dp">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtVehicleNumber"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLines="1"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- ===================================================== -->
+            <!--               VEHICLE PHOTOS (NEEDS VEH NO)           -->
+            <!-- ===================================================== -->
+            <com.google.android.material.textview.MaterialTextView
+                android:text="Vehicle Photos"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <!-- Row 1: front + back + left + right -->
+            <LinearLayout
+                android:id="@+id/photoRow1"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="4"
+                android:gravity="center_horizontal">
+
+                <!-- FRONT -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardFrontPhoto"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="2dp">
+
+                        <ImageView
+                            android:id="@+id/imgFrontPhoto"
+                            android:src="@drawable/ic_add_photo"
+                            android:scaleType="centerCrop"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:text="Front View"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <!-- BACK -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardBackPhoto"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="2dp">
+
+                        <ImageView
+                            android:id="@+id/imgBackPhoto"
+                            android:src="@drawable/ic_add_photo"
+                            android:scaleType="centerCrop"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:text="Back View"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <!-- LEFT -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardLeftPhoto"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="2dp">
+
+                        <ImageView
+                            android:id="@+id/imgLeftPhoto"
+                            android:src="@drawable/ic_add_photo"
+                            android:scaleType="centerCrop"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:text="Left View"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <!-- RIGHT -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardRightPhoto"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="2dp">
+
+                        <ImageView
+                            android:id="@+id/imgRightPhoto"
+                            android:src="@drawable/ic_add_photo"
+                            android:scaleType="centerCrop"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:text="Right View"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- RC BOOK PHOTO (separate row) -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardRcBookPhoto"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp">
+
+                    <ImageView
+                        android:id="@+id/imgRcBookPhoto"
+                        android:src="@drawable/ic_add_photo"
+                        android:scaleType="centerCrop"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:text="RC Book Photo"
+                    android:textSize="13sp"
+                    android:layout_marginTop="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+
+
+            <!-- ===================================================== -->
+            <!--           REMAINING VEHICLE BASIC DETAILS             -->
+            <!-- ===================================================== -->
 
             <!-- RC Number -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/lytRcNumber"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="RC Number">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtRcNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+
             <!-- Make + Model -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:weightSum="2"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -62,6 +256,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:hint="Make">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edtMake"
                         android:layout_width="match_parent"
@@ -71,10 +266,11 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/lytModel"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:hint="Model">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edtModel"
                         android:layout_width="match_parent"
@@ -83,11 +279,12 @@
 
             </LinearLayout>
 
+
             <!-- Year + Seats -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:weightSum="2"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -97,6 +294,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:hint="Manufacture Year">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edtYear"
                         android:inputType="number"
@@ -107,10 +305,11 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/lytSeats"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:hint="Seating Capacity">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edtSeats"
                         android:inputType="number"
@@ -120,6 +319,7 @@
 
             </LinearLayout>
 
+
             <!-- Odometer -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/lytOdometerReg"
@@ -127,12 +327,102 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Odometer at Registration (KM)">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtOdometerAtReg"
                     android:inputType="numberDecimal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Chassis Number -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytChassiNumber"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Chassis Number">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtChassiNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Engine Number -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytEngineNumber"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Engine Number">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtEngineNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Transmission -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutTransmissionType"
+                style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Transmission Type">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoTransmissionType"
+                    android:inputType="none"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Fuel -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutFuelType"
+                style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Fuel Type">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoFuelType"
+                    android:inputType="none"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Ownership -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutOwnershipType"
+                style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Vehicle Ownership">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoOwnershipType"
+                    android:inputType="none"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+
 
             <View
                 android:layout_width="match_parent"
@@ -141,16 +431,17 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- FLOAT NEXT BUTTON -->
+
+    <!-- NEXT BUTTON -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnNext"
         android:src="@drawable/ic_arrow_forward"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:tint="@android:color/white"
-        app:backgroundTint="?attr/colorPrimary"
         android:layout_marginHorizontal="25dp"
         android:layout_marginBottom="50dp"
+        app:tint="@android:color/white"
+        app:backgroundTint="?attr/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 

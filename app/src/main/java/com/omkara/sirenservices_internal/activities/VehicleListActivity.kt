@@ -16,6 +16,8 @@ import com.omkara.sirenservices_internal.R
 import com.omkara.sirenservices_internal.adapter.VehicleAdapter
 import com.omkara.sirenservices_internal.adapter.VehicleListItem
 import com.omkara.sirenservices_internal.loginsignup.VehicleRegistrationActivity
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class VehicleListActivity : AppCompatActivity() {
 
@@ -132,9 +134,11 @@ class VehicleListActivity : AppCompatActivity() {
         progressDialog.show()
 
         vehiclesListener?.remove()
+
         vehiclesListener = firestore.collection("vehicles")
             .orderBy("created_at", Query.Direction.DESCENDING)
             .addSnapshotListener { snap, err ->
+
                 progressDialog.dismiss()
                 swipeRefresh.isRefreshing = false
 
@@ -150,38 +154,79 @@ class VehicleListActivity : AppCompatActivity() {
                 allVehicles.clear()
 
                 if (snap != null && !snap.isEmpty) {
+
                     for (doc in snap.documents) {
+
                         val id = doc.id
-                        val vehicleNumber = doc.getString("vehicle_number") ?: ""
-                        val make = doc.getString("make") ?: ""
-                        val model = doc.getString("model") ?: ""
-                        val odometerKm = doc.getDouble("last_service_odometer")
-                            ?: doc.getDouble("odometer_at_registration")
-                        val status = doc.getString("status") ?: "ACTIVE"
 
-                        // Thumbnail from S3 URLs saved in Firestore
-                        val photos = doc.get("photos") as? Map<*, *>
-                        val thumb = photos?.get("photo_front") as? String
-                        val lastsrvdt = doc.getString("last_service_date") ?: ""
+                        // -------------------------
+                        // BASIC DETAILS
+                        // -------------------------
+                        val vehicleNumber = doc.getString("vehicle_info.vehicle_number") ?: ""
+                        val make = doc.getString("vehicle_info.make") ?: ""
+                        val model = doc.getString("vehicle_info.model") ?: ""
 
-                        allVehicles.add(
-                            VehicleListItem(
-                                id = id,
-                                vehicleNumber = vehicleNumber,
-                                make = make,
-                                model = model,
-                                status = status,
-                                odometerKm = odometerKm,
-                                photoUrl = thumb,
-                                lastServiceDate =  lastsrvdt
-                            )
-                        )
+                        // -------------------------
+                        // STATUS (new model)
+                        // -------------------------
+                        val status = doc.getString("vehicle_info.status") ?: "ACTIVE"
+
+                        // -------------------------
+                        // PHOTOS
+                        // -------------------------
+                        val photoFront = doc.getString("photos.photo_front")
+
+                        // -------------------------
+                        // ODOMETER
+                        // -------------------------
+                        val odometerKm =
+                            doc.getDouble("service_info.last_service_odometer")
+                                ?: doc.getDouble("vehicle_info.odometer_at_registration")
+                                ?: 0.0
+
+                        // -------------------------
+                        // FETCH LATEST SERVICE DATE FROM SUBCOLLECTION
+                        // -------------------------
+                        firestore.collection("vehicles")
+                            .document(id)
+                            .collection("service_records")
+                            .orderBy("createdAt", Query.Direction.DESCENDING)
+                            .limit(1)
+                            .get()
+                            .addOnSuccessListener { serviceSnap ->
+
+                                val lastServiceDate: String = if (!serviceSnap.isEmpty) {
+                                    val ts = serviceSnap.documents[0].getTimestamp("createdAt")
+                                    val date = ts?.toDate()
+                                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(date!!)
+                                } else {
+                                    "-" // no service records
+                                }
+
+                                // Add AFTER pulling service date
+                                allVehicles.add(
+                                    VehicleListItem(
+                                        id = id,
+                                        vehicleNumber = vehicleNumber,
+                                        make = make,
+                                        model = model,
+                                        status = status,
+                                        odometerKm = odometerKm,
+                                        photoUrl = photoFront,
+                                        lastServiceDate = lastServiceDate
+                                    )
+                                )
+
+                                // Only refresh UI after all vehicles loaded
+                                if (allVehicles.size == snap.size()) {
+                                    applyFilters()
+                                }
+                            }
                     }
                 }
-
-                applyFilters()
             }
     }
+
 
     private fun refreshVehicles() {
         swipeRefresh.isRefreshing = true

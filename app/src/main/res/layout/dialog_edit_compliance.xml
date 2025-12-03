@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- NOTE INFO -->
+        <TextView
+            android:id="@+id/txtNote"
+            android:text="NOTE: When you update this compliance, the current record will be moved to history and the newly entered values will become the current compliance."
+            android:textColor="#CC0000"
+            android:textSize="13sp"
+            android:padding="8dp"
+            android:background="#FFF3E0"
+            android:layout_marginBottom="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Provider -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Provider"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
+        <EditText
+            android:id="@+id/edtProvider"
+            android:background="@android:color/transparent"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Certificate No -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Certificate Number"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
+        <EditText
+            android:id="@+id/edtCertificateNo"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Number -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Document Number"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
+        <EditText
+            android:id="@+id/edtNumber"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Type -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Type"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
+        <EditText
+            android:id="@+id/edtType"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Premium -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Premium Amount"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
+        <EditText
+            android:id="@+id/edtPremium"
+            android:inputType="numberDecimal"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Valid From -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Valid From"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
+        <EditText
+            android:id="@+id/edtFrom"
+            android:focusable="false"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Valid Till -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Valid Till"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
+        <EditText
+            android:id="@+id/edtTill"
+            android:focusable="false"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</ScrollView>

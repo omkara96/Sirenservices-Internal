@@ -3,12 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="0dp">
+    android:layout_height="match_parent">
 
-    <!-- Scrollable Content -->
+    <!-- SCROLLABLE FORM -->
     <ScrollView
-        android:id="@+id/scrollArea"
+        android:id="@+id/scrollService"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="16dp"
@@ -24,107 +23,122 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- INSURANCE HEADER -->
+            <!-- HEADER -->
             <com.google.android.material.textview.MaterialTextView
-                android:text="Last Servicing Details (Optional can be skippe)"
-                android:textSize="16sp"
+                android:text="Service and Maintenance (Review N Save)"
                 android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginBottom="12dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
+            <!-- SERVICE TYPE (NEW - at top as requested) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytServiceType"
+                style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Service Type">
+                <AutoCompleteTextView
+                    android:id="@+id/autoServiceType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:clickable="true"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Last Service Date -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/lytLastServiceDate"
+                android:hint="Last Service Date"
                 android:layout_marginTop="8dp"
                 app:endIconMode="custom"
                 app:endIconDrawable="@drawable/ic_calendar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Last Service Date">
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtLastServiceDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:focusable="false"
-                    android:clickable="true"/>
-
+                    android:clickable="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Last Service Odometer -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/lytLastServiceOdometer"
+                android:id="@+id/lytLastServiceOdo"
                 android:layout_marginTop="8dp"
+                android:hint="Last Service Odometer (KM)"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Last Service Odometer (KM)">
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtLastServiceOdometer"
+                    android:inputType="numberDecimal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"/>
-
+                    android:layout_height="wrap_content"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Next Service Due KM -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/lytNextServiceKm"
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Next Service Due KM">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtNextServiceKm"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Workshop Name -->
+            <!-- Workshop Name (will be stored in notes) -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/lytWorkshop"
                 android:layout_marginTop="8dp"
+                android:hint="Workshop Name"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Workshop Name">
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtWorkshop"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
-
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Next Service Due KM (kept in UI but ignored for ServiceRecord) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/lytNextServiceKm"
+                android:layout_marginTop="8dp"
+                android:hint="Next Service Due KM (optional)"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtNextServiceKm"
+                    android:inputType="numberDecimal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="120dp"/>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Floating Previous Button -->
+    <!-- PREVIOUS BUTTON -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnPrev"
+        android:src="@drawable/ic_arrow_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrow_back"
-        app:tint="@android:color/white"
-        app:backgroundTint="?attr/colorPrimary"
         android:layout_marginLeft="25dp"
         android:layout_marginBottom="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <!-- Floating Next Button -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnNext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrow_forward"
         app:tint="@android:color/white"
         app:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- SAVE (final) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnNext"
+        android:src="@drawable/ic_att_present"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginRight="25dp"
         android:layout_marginBottom="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
+        app:tint="@android:color/white"
+        app:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

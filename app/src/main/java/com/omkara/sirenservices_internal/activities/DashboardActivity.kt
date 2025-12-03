@@ -3,7 +3,6 @@ package com.omkara.sirenservices_internal.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -13,11 +12,12 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.omkara.sirenservices_internal.R
-import com.omkara.sirenservices_internal.loginsignup.UserRegistation
-import com.omkara.sirenservices_internal.loginsignup.VehicleRegistrationActivity
+import com.omkara.sirenservices_internal.models.ComplianceCurrent
+import com.omkara.sirenservices_internal.models.ComplianceModel
+import com.omkara.sirenservices_internal.models.ComplianceSection
 import com.omkara.sirenservices_internal.models.TripModel
 import java.text.NumberFormat
 import java.util.Calendar
@@ -109,6 +109,8 @@ class DashboardActivity : AppCompatActivity() {
         tvYearSpend = findViewById(R.id.tvYearSpend)
         tvYearDailyAvg = findViewById(R.id.tvYearDailyAvg)
 
+
+     //   migrateAllVehiclesToNewComplianceModel()  // --Only one time run was necessary
         setupToolbar()
         setupListeners()
 
@@ -148,7 +150,7 @@ class DashboardActivity : AppCompatActivity() {
                 R.id.nav_users -> startActivity(Intent(this, com.omkara.sirenservices_internal.activities.ListUserActivity::class.java))
                 R.id.nav_vehicles -> startActivity(Intent(this, com.omkara.sirenservices_internal.activities.VehicleListActivity::class.java))
                 R.id.nav_trips -> startActivity(Intent(this, com.omkara.sirenservices_internal.activities.TripListActivity::class.java))
-                R.id.nav_billing -> startActivity(Intent(this, com.omkara.sirenservices_internal.loginsignup.UserRegistation::class.java))
+                R.id.nav_billing -> startActivity(Intent(this, TripCreateActivity::class.java))
                 else -> { /* handle other navs */ }
             }
             drawer.closeDrawer(GravityCompat.START)
@@ -370,4 +372,103 @@ class DashboardActivity : AppCompatActivity() {
         val completed: Int = 0,
         val count: Int = 0
     )
+
+
+    fun migrateAllVehiclesToNewComplianceModel() {
+
+        val db = FirebaseFirestore.getInstance()
+        val vehiclesRef = db.collection("vehicles")
+
+        vehiclesRef.get()
+            .addOnSuccessListener { snapshot ->
+
+                for (doc in snapshot.documents) {
+
+                    val vehicleId = doc.id
+                    val data = doc.data ?: continue
+
+                    // If already migrated → skip
+                    if (data.containsKey("compliance")) {
+                        continue
+                    }
+
+                    val insuranceSection = ComplianceSection(
+                        current = ComplianceCurrent(
+                            provider = data["insurance_provider"] as? String,
+                            number = data["insurance_number"] as? String,
+                            valid_from = data["insurance_start"] as? String,
+                            valid_till = data["insurance_end"] as? String,
+                            updated_at = Timestamp.now()
+                        ),
+                        history = emptyList()
+                    )
+
+                    val pucSection = ComplianceSection(
+                        current = ComplianceCurrent(
+                            certificate_no = data["puc_number"] as? String,
+                            valid_from = data["puc_start"] as? String,
+                            valid_till = data["puc_end"] as? String,
+                            updated_at = Timestamp.now()
+                        ),
+                        history = emptyList()
+                    )
+
+                    val permitSection = ComplianceSection(
+                        current = ComplianceCurrent(
+                            number = data["permit_number"] as? String,
+                            valid_till = data["permit_expiry"] as? String,
+                            updated_at = Timestamp.now()
+                        ),
+                        history = emptyList()
+                    )
+
+                    val fitnessSection = ComplianceSection(
+                        current = ComplianceCurrent(
+                            valid_till = data["fitness_expiry"] as? String,
+                            updated_at = Timestamp.now()
+                        ),
+                        history = emptyList()
+                    )
+
+                    val complianceModel = ComplianceModel(
+                        insurance = insuranceSection,
+                        puc = pucSection,
+                        permit = permitSection,
+                        fitness = fitnessSection
+                    )
+
+                    // Build update map — keeps everything else intact
+                    val updateMap = mutableMapOf<String, Any?>()
+                    updateMap["compliance"] = complianceModel
+
+                    // Optional: REMOVE old fields from root (recommended)
+                    updateMap["insurance_provider"] = FieldValue.delete()
+                    updateMap["insurance_number"] = FieldValue.delete()
+                    updateMap["insurance_start"] = FieldValue.delete()
+                    updateMap["insurance_end"] = FieldValue.delete()
+
+                    updateMap["puc_number"] = FieldValue.delete()
+                    updateMap["puc_start"] = FieldValue.delete()
+                    updateMap["puc_end"] = FieldValue.delete()
+
+                    updateMap["permit_number"] = FieldValue.delete()
+                    updateMap["permit_expiry"] = FieldValue.delete()
+
+                    updateMap["fitness_expiry"] = FieldValue.delete()
+
+                    vehiclesRef.document(vehicleId)
+                        .update(updateMap)
+                        .addOnSuccessListener {
+                            Log.d("MIGRATION", "Migrated vehicle: $vehicleId")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("MIGRATION", "Error migrating $vehicleId: ${e.message}")
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("MIGRATION", "Error loading vehicles: ${e.message}")
+            }
+    }
+
 }

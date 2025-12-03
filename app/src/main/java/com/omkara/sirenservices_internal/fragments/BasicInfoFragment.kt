@@ -3,91 +3,94 @@ package com.omkara.sirenservices_internal.fragments.details
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputType
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import coil.load
-import coil.request.CachePolicy
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omkara.sirenservices_internal.R
+import com.omkara.sirenservices_internal.adapter.PhotoPagerAdapter
+import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 
 class BasicInfoFragment : Fragment() {
 
-    private lateinit var layoutImages: LinearLayout
+    private lateinit var photoPager: ViewPager2
+    private lateinit var photoIndicator: WormDotsIndicator
+
     private lateinit var txtVehicleNumber: TextView
     private lateinit var txtMakeModel: TextView
     private lateinit var txtYear: TextView
     private lateinit var txtFuel: TextView
     private lateinit var txtTransmission: TextView
-
     private lateinit var txtChassis: TextView
     private lateinit var txtEngine: TextView
-
     private lateinit var txtOdometer: TextView
-
-    private lateinit var txtAlerts: TextView
-    private lateinit var txtNotes: TextView
+    private lateinit var txtVehicleOwnership: TextView
     private lateinit var btnUpdateOdometer: View
+    private lateinit var scrollView: NestedScrollView
+    private lateinit var txtYearSeats: TextView
 
-    private var vehicleId: String = ""
+    private var vehicleId = ""
 
     companion object {
-        fun newInstance(vehicleId: String): BasicInfoFragment {
+        fun newInstance(id: String): BasicInfoFragment {
             val f = BasicInfoFragment()
-            val b = Bundle()
-            b.putString("vehicle_id", vehicleId)
-            f.arguments = b
+            f.arguments = Bundle().apply { putString("vehicle_id", id) }
             return f
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        vehicleId = requireActivity().intent.getStringExtra("vehicle_id") ?: ""
+        vehicleId = arguments?.getString("vehicle_id") ?: ""
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val v = inflater.inflate(R.layout.fragment_basic_info, container, false)
-        bindViews(v)
-        loadVehicleInfo()
 
-        return v
-    }
-
-    private fun bindViews(v: View) {
-        layoutImages = v.findViewById(R.id.layoutImages)
+        photoPager = v.findViewById(R.id.photoPager)
+        photoIndicator = v.findViewById(R.id.photoIndicator)
 
         txtVehicleNumber = v.findViewById(R.id.txtVehicleNumber)
         txtMakeModel = v.findViewById(R.id.txtMakeModel)
         txtYear = v.findViewById(R.id.txtYear)
         txtFuel = v.findViewById(R.id.txtFuel)
         txtTransmission = v.findViewById(R.id.txtTransmission)
-
         txtChassis = v.findViewById(R.id.txtChassis)
         txtEngine = v.findViewById(R.id.txtEngine)
-
         txtOdometer = v.findViewById(R.id.txtOdometer)
+        txtVehicleOwnership = v.findViewById(R.id.txtvehicleOwnership)
         btnUpdateOdometer = v.findViewById(R.id.btnUpdateOdometer)
+        scrollView = v.findViewById(R.id.scrollView)
+        txtYearSeats = v.findViewById<TextView>(R.id.txtYearSeats)
 
-        txtAlerts = v.findViewById(R.id.txtAlerts)
-        txtNotes = v.findViewById(R.id.txtNotes)
+        val btnLeft = v.findViewById<ImageView>(R.id.btnLeft)
+        val btnRight = v.findViewById<ImageView>(R.id.btnRight)
+
+        loadVehicleInfo()
+
+        btnLeft.setOnClickListener {
+            val current = photoPager.currentItem
+            if (current > 0) photoPager.currentItem = current - 1
+        }
+
+        btnRight.setOnClickListener {
+            val current = photoPager.currentItem
+            val total = photoPager.adapter?.itemCount ?: 0
+            if (current < total - 1) {
+                photoPager.currentItem = current + 1
+            }
+        }
+
+        return v
     }
 
-    // --------------------------------------------------------
-    // LOAD VEHICLE DATA FROM FIRESTORE
-    // --------------------------------------------------------
     private fun loadVehicleInfo() {
-
         FirebaseFirestore.getInstance()
             .collection("vehicles")
             .document(vehicleId)
@@ -96,133 +99,105 @@ class BasicInfoFragment : Fragment() {
 
                 if (!doc.exists()) return@addOnSuccessListener
 
-                txtVehicleNumber.text = doc.getString("vehicle_number") ?: "-"
-                txtMakeModel.text = "${doc.getString("make")} • ${doc.getString("model")}"
+                // ---- Read Nested vehicle_info ----
+                val info = doc.get("vehicle_info") as? Map<String, Any> ?: emptyMap()
 
-                txtYear.text = "Year: ${doc.get("manufacture_year") ?: "-"}"
-                txtFuel.text = "Fuel: ${doc.getString("fuel_type") ?: "-"}"
-                txtTransmission.text = "Transmission: ${doc.getString("transmission") ?: "-"}"
+                txtVehicleNumber.text = info["vehicle_number"]?.toString() ?: "-"
+                txtMakeModel.text = "${info["make"] ?: "-"} • ${info["model"] ?: "-"}"
+                txtYear.text = "Year: ${info["manufacture_year"] ?: "-"}"
+                txtFuel.text = "Fuel: ${info["fuel_type"] ?: "-"}"
+                txtTransmission.text = "Transmission: ${info["transmission"] ?: "-"}"
+                txtChassis.text = "Chassis No: ${info["chassis_number"] ?: "-"}"
+                txtEngine.text = "Engine No: ${info["engine_number"] ?: "-"}"
+                txtVehicleOwnership.text = "Ownership: ${info["owner_type"] ?: "-"}"
+                txtYearSeats.text="Seating Capacity: ${info["seating_capacity"] ?: "-"}"
 
-                txtChassis.text = "Chassis No: ${doc.getString("chassis_number") ?: "-"}"
-                txtEngine.text = "Engine No: ${doc.getString("engine_number") ?: "-"}"
+                val odo = (info["odometer_at_registration"] as? Number)?.toDouble() ?: 0.0
+                txtOdometer.text = "$odo km"
 
-                val odometer = doc.getDouble("last_service_odometer")
-                    ?: doc.getDouble("odometer_at_registration")
-                txtOdometer.text = "${odometer ?: 0} km"
+                // ---- Photos ----
+                val photos = doc.get("photos") as? Map<String, String> ?: emptyMap()
+                val photoList = listOfNotNull(
+                    photos["photo_front"],
+                    photos["photo_back"],
+                    photos["photo_left"],
+                    photos["photo_right"],
+                    photos["photo_rcbook"]
+                )
 
-                loadImages(doc.get("photos") as? Map<String, String> ?: emptyMap())
+                setupPhotoSlider(photoList)
+                setupSwipeFix()
 
                 btnUpdateOdometer.setOnClickListener {
-                    showUpdateOdometerDialog(odometer ?: 0.0)
+                    showUpdateOdometerDialog(odo)
                 }
 
             }
     }
 
-    // --------------------------------------------------------
-    // LOAD IMAGES
-    // --------------------------------------------------------
-    private fun loadImages(photoMap: Map<String, String>) {
-        layoutImages.removeAllViews()
+    private fun setupPhotoSlider(photoUrls: List<String>) {
 
-        val keys = listOf(
-            "photo_front", "photo_back", "photo_left",
-            "photo_right", "photo_extra",
-            "doc_rc", "doc_insurance", "doc_puc",
-            "doc_permit", "doc_fitness", "doc_other"
-        )
+        val urls = if (photoUrls.isEmpty()) {
+            listOf("android.resource://${requireContext().packageName}/${R.drawable.ic_doc_placeholder}")
+        } else photoUrls
 
-        for (key in keys) {
-            val url = photoMap[key] ?: continue
+        photoPager.adapter = PhotoPagerAdapter(requireContext(), urls)
+        photoIndicator.attachTo(photoPager)
 
-            val img = ImageView(requireContext())
-            val params = LinearLayout.LayoutParams(160, 120)
-            params.marginEnd = 12
-            img.layoutParams = params
-            img.scaleType = ImageView.ScaleType.CENTER_CROP
-            img.setBackgroundResource(R.drawable.round_image_bg)
-
-            img.load(url) {
-                crossfade(true)
-                placeholder(R.drawable.ic_ambulance)
-                error(R.drawable.ic_att_absent)
-                diskCachePolicy(CachePolicy.ENABLED)
-            }
-
-            img.setOnClickListener {
-                openFullImage(url)
-            }
-
-            layoutImages.addView(img)
-        }
-
-        if (layoutImages.childCount == 0) {
-            val t = TextView(requireContext())
-            t.text = "No photos uploaded"
-            t.setPadding(16, 8, 16, 8)
-            layoutImages.addView(t)
+        (photoPager.getChildAt(0))?.setOnTouchListener { v, _ ->
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            false
         }
     }
 
-    // --------------------------------------------------------
-    // FULL SCREEN IMAGE VIEWER
-    // --------------------------------------------------------
-    private fun openFullImage(url: String) {
-        val dialog = AlertDialog.Builder(requireContext()).create()
-        val img = ImageView(requireContext())
+    private fun setupSwipeFix() {
+        val parentVP = requireActivity().findViewById<ViewPager2>(R.id.viewPager)
+        val child = photoPager.getChildAt(0)
 
-        img.load(url) {
-            placeholder(R.drawable.ic_ambulance)
-            error(R.drawable.ic_att_absent)
-            diskCachePolicy(CachePolicy.ENABLED)
+        child.setOnTouchListener { v, event ->
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            scrollView.requestDisallowInterceptTouchEvent(true)
+            parentVP?.isUserInputEnabled = false
+
+            if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
+                parentVP?.isUserInputEnabled = true
+            }
+            false
         }
-
-        dialog.setView(img)
-        dialog.show()
     }
 
-    // --------------------------------------------------------
-    // UPDATE ODOMETER
-    // --------------------------------------------------------
-    private fun showUpdateOdometerDialog(currentOdo: Double) {
-        val input = EditText(requireContext())
-        input.hint = "Enter new Odometer"
-        input.inputType = InputType.TYPE_CLASS_NUMBER
-        input.setText(currentOdo.toInt().toString())
+    private fun showUpdateOdometerDialog(previous: Double) {
+        val input = EditText(requireContext()).apply {
+            inputType = InputType.TYPE_CLASS_NUMBER
+            setText(previous.toInt().toString())
+        }
 
         AlertDialog.Builder(requireContext())
             .setTitle("Update Odometer")
             .setView(input)
-            .setPositiveButton("Update") { _, _ ->
-
-                val newOdo = input.text.toString().toDoubleOrNull()
-                if (newOdo == null || newOdo < currentOdo) {
-                    showToast("Invalid odometer value!")
+            .setPositiveButton("Save") { _, _ ->
+                val newValue = input.text.toString().toDoubleOrNull()
+                if (newValue == null || newValue < previous) {
+                    Toast.makeText(requireContext(), "Invalid value!", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
-
-                updateOdometerToFirestore(newOdo)
+                updateOdometer(newValue)
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
 
-    private fun updateOdometerToFirestore(newOdo: Double) {
-
+    private fun updateOdometer(value: Double) {
         FirebaseFirestore.getInstance()
             .collection("vehicles")
             .document(vehicleId)
-            .update("last_service_odometer", newOdo)
+            .update("vehicle_info.odometer_at_registration", value)
             .addOnSuccessListener {
-                txtOdometer.text = "$newOdo km"
-                showToast("Odometer updated successfully")
+                txtOdometer.text = "$value km"
+                Toast.makeText(requireContext(), "Odometer updated", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
-                showToast("Failed: ${it.message}")
+                Toast.makeText(requireContext(), "Error: ${it.message}", Toast.LENGTH_SHORT).show()
             }
-    }
-
-    private fun showToast(msg: String) {
-        android.widget.Toast.makeText(requireContext(), msg, android.widget.Toast.LENGTH_SHORT).show()
     }
 }

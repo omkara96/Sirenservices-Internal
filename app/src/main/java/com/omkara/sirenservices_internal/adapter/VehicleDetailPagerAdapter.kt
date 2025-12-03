@@ -16,10 +16,10 @@ class VehicleDetailPagerAdapter(fa: FragmentActivity, private val vehicleId: Str
             0 -> BasicInfoFragment.newInstance(
                 vehicleId
             )
-//            1 -> ComplianceFragment.newInstance(vehicleId)
-//            2 -> ServiceFragment.newInstance(vehicleId)
-//            3 -> FinanceFragment.newInstance(vehicleId)
-//            else -> DocumentsFragment.newInstance(vehicleId)
+            1 -> VehicleShowUpdateComplianceFragment.newInstance(vehicleId)
+            2 -> VehicleShowServiceFragment.newInstance(vehicleId)
+            3 -> VehicleShowRevenueFragment.newInstance(vehicleId)
+            4 -> VehicleShowUpdtDocumentFragment.newInstance(vehicleId)
             else -> BasicInfoFragment.newInstance(
                 vehicleId
             )
