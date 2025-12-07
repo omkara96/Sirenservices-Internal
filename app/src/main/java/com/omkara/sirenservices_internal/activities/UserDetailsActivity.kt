@@ -15,11 +15,13 @@ import com.omkara.sirenservices_internal.viewmodels.UserDetailsViewModel
 import com.omkara.sirenservices_internal.models.UserModel
 import android.widget.ImageView
 import android.widget.TextView
+import com.google.android.material.appbar.MaterialToolbar
 import com.omkara.sirenservices_internal.adapter.UserDetailsPagerAdapter
 
 class UserDetailsActivity : AppCompatActivity() {
 
     private val vm: UserDetailsViewModel by viewModels()
+    private lateinit var toolbar: MaterialToolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +37,10 @@ class UserDetailsActivity : AppCompatActivity() {
         val viewPager = findViewById<ViewPager2>(R.id.viewPagerUserDetails)
         val tabLayout = findViewById<TabLayout>(R.id.tabLayoutUserDetails)
 
-        viewPager.adapter = UserDetailsPagerAdapter(this, userId)
+        toolbar = findViewById(R.id.toolbar)
 
+        viewPager.adapter = UserDetailsPagerAdapter(this, userId)
+        setupToolbar()
         TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
             tab.text = when (pos) {
                 0 -> "Profile"
@@ -62,5 +66,10 @@ class UserDetailsActivity : AppCompatActivity() {
             txtRole.text = "Role: ${user.role}"
             txtStatus.text = "Status: ${user.status}"
         }
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { finish() }
     }
 }

@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 
 sealed class RegistrationState {
     object Idle : RegistrationState()
@@ -29,6 +30,7 @@ class UserRegistrationViewModel(
 
     private val _state = MutableStateFlow<RegistrationState>(RegistrationState.Idle)
     val state: StateFlow<RegistrationState> = _state
+    private lateinit var auth : FirebaseAuth
 
     /**
      * High-level register function.
@@ -40,6 +42,7 @@ class UserRegistrationViewModel(
         firstName: String,
         middleName: String?,
         lastName: String?,
+        password: String?,
         dob: String?,
         mobile: String,
         email: String?,
@@ -130,7 +133,8 @@ class UserRegistrationViewModel(
                         "availability" to it.availability
                     ) } ?: null),
                     "createdAt" to createdAt,
-                    "updatedAt" to createdAt
+                    "updatedAt" to createdAt,
+                    "password" to password
                 )
 
                 // 4) save to Firestore
@@ -143,4 +147,8 @@ class UserRegistrationViewModel(
             }
         }
     }
+
+
+
+
 }

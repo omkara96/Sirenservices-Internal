@@ -13,7 +13,7 @@ data class UserModel(
     val mobile: String = "",
     val email: String? = null,
     val address: String? = null,
-
+    val password: String? = "",
     val role: String = "owner",      // owner/driver/staff/operator
     val status: String = "active",   // active/inactive
 

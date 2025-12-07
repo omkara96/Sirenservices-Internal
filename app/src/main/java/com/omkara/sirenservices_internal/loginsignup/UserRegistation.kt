@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.omkara.sirenservices_internal.R
 import com.omkara.sirenservices_internal.viewmodels.RegistrationState
 import com.omkara.sirenservices_internal.viewmodels.UserRegistrationViewModel
@@ -35,6 +38,7 @@ class UserRegistation : AppCompatActivity() {
     private lateinit var autoRole: AutoCompleteTextView
     private lateinit var autoStatus: AutoCompleteTextView
     private lateinit var driverSection: LinearLayout
+    private lateinit var edtPasword : TextInputEditText
 
     // Driver Fields
     private lateinit var edtLicense: TextInputEditText
@@ -79,10 +83,12 @@ class UserRegistation : AppCompatActivity() {
     private val REQ_PASSBOOK = 205
     private val REQ_LICENCE = 206
 
+    private lateinit var auth : FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_registation)
-
+        auth = FirebaseAuth.getInstance()
         bindViews()
         setupDropdowns()
         setupListeners()
@@ -108,7 +114,7 @@ class UserRegistation : AppCompatActivity() {
         edtIFSC = findViewById(R.id.edtIFSC)
         edtBankName = findViewById(R.id.edtBankName)
         edtBranchName = findViewById(R.id.edtBranchName)
-
+        edtPasword = findViewById(R.id.edtPassword)
         btnPickProfile = findViewById(R.id.btnPickProfile)
         imgProfile = findViewById(R.id.imgProfilePhoto)
         btnRegister = findViewById(R.id.btnRegisterUser)
@@ -234,9 +240,10 @@ class UserRegistation : AppCompatActivity() {
         val firstName = edtFirstName.text.toString().trim()
         val mobile = edtMobile.text.toString().trim()
         val role = autoRole.text.toString().trim()
+        val password = edtPasword.text.toString().trim()
 
-        if (firstName.isEmpty() || mobile.isEmpty() || role.isEmpty()) {
-            Toast.makeText(this, "Name, Mobile & Role required", Toast.LENGTH_SHORT).show()
+        if (firstName.isEmpty() || mobile.isEmpty() || role.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Name, Password, Mobile & Role required", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -261,6 +268,8 @@ class UserRegistation : AppCompatActivity() {
             profileUri?.let { contentResolver.openInputStream(it) }
         }
 
+
+
         vm.registerUser(
             userId = null,
             firstName = firstName,
@@ -282,7 +291,31 @@ class UserRegistation : AppCompatActivity() {
             ifsc = edtIFSC.text.toString(),
             bankName = edtBankName.text.toString(),
             branchName = edtBranchName.text.toString(),
-            documentInputs = if (docInputs.isEmpty()) null else docInputs
+            documentInputs = if (docInputs.isEmpty()) null else docInputs,
+            password = edtPasword.text.toString()
         )
+        signUpUser(edtEmail.text.toString().trim(), edtPasword.text.toString().trim())
     }
+
+
+    fun signUpUser(email: String, password: String) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign up success, update UI with the signed-in user's information
+                    Log.d("UserRegister", "createUserWithEmailAndPassword:success")
+                    val user = auth.currentUser
+                    // Navigate to another activity or update UI as needed
+                    Toast.makeText(baseContext, "Account created successfully.",
+                        Toast.LENGTH_SHORT).show()
+                } else {
+                    // If sign up fails, display a message to the user.
+                    Log.w("UserRegister", "createUserWithEmailAndPassword:failure", task.exception)
+                    Toast.makeText(baseContext, "Authentication failed: ${task.exception?.message}",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+
 }

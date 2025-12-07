@@ -52,24 +52,16 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation ("com.google.firebase:firebase-bom:33.6.0")
     implementation ("com.hbb20:ccp:2.7.3")
-    // Coroutines
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-// OkHttp (PUT to S3)
     implementation ("com.squareup.okhttp3:okhttp:4.11.0")
-
-// Image picker
     implementation ("com.github.dhaval2404:imagepicker:2.1")
-
-// Coil for image loading + caching
     implementation ("io.coil-kt:coil:2.2.2")
-
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
     implementation("androidx.fragment:fragment-ktx:1.7.0")
     implementation ("com.applandeo:material-calendar-view:1.9.0")
     implementation ("com.tbuonomo:dotsindicator:4.3")
-
+    implementation ("com.airbnb.android:lottie:6.0.0")
+    implementation ("androidx.core:core-splashscreen:1.0.1")
 }
