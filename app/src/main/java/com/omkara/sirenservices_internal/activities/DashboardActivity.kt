@@ -12,14 +12,19 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omkara.sirenservices_internal.R
+import com.omkara.sirenservices_internal.loginsignup.LoginActivity
+import com.omkara.sirenservices_internal.loginsignup.UserRegistation
+import com.omkara.sirenservices_internal.loginsignup.VehicleRegistrationActivity
 import com.omkara.sirenservices_internal.models.ComplianceCurrent
 import com.omkara.sirenservices_internal.models.ComplianceModel
 import com.omkara.sirenservices_internal.models.ComplianceSection
 import com.omkara.sirenservices_internal.models.TripModel
 import java.text.NumberFormat
+import java.time.Duration
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -67,6 +72,7 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var tvYearDailyAvg: com.google.android.material.textview.MaterialTextView
 
     private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     private val nf: NumberFormat = NumberFormat.getCurrencyInstance(Locale("en", "IN")).apply {
         maximumFractionDigits = 0
@@ -147,15 +153,27 @@ class DashboardActivity : AppCompatActivity() {
         // nav item clicks (optional)
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_users -> startActivity(Intent(this, com.omkara.sirenservices_internal.activities.ListUserActivity::class.java))
-                R.id.nav_vehicles -> startActivity(Intent(this, com.omkara.sirenservices_internal.activities.VehicleListActivity::class.java))
-                R.id.nav_trips -> startActivity(Intent(this, com.omkara.sirenservices_internal.activities.TripListActivity::class.java))
-                R.id.nav_billing -> startActivity(Intent(this, TripCreateActivity::class.java))
+                R.id.nav_add_users -> startActivity(Intent(this, UserRegistation::class.java))
+                R.id.nav_add_vehicles -> startActivity(Intent(this, VehicleRegistrationActivity::class.java))
+                R.id.nav_add_trip -> startActivity(Intent(this, TripCreateActivity::class.java))
+                R.id.nav_manage_users -> startActivity(Intent(this, ListUserActivity::class.java))
+                R.id.nav_manage_vehicles -> startActivity(Intent(this, VehicleListActivity::class.java))
+                R.id.nav_manage_trips -> startActivity(Intent(this, TripListActivity::class.java))
+                R.id.nav_billing_and_records -> Toast.makeText(this, "Billing and Records Development is in Progress, feature soon be avalilable", 3000).show()
+                R.id.nav_aboutapp -> Toast.makeText(this, "About App section Development is in Progress, feature soon be avalilable", 3000).show()
+                R.id.nav_aboutdeveloper -> Toast.makeText(this, "About Developer and Contact section Development is in Progress, feature soon be avalilable", 3000).show()
+                R.id.nav_logout -> {h_logout()}
                 else -> { /* handle other navs */ }
             }
             drawer.closeDrawer(GravityCompat.START)
             true
         }
+    }
+
+    private fun h_logout(){
+        auth.signOut()
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
     }
 
     private fun loadAllStats() {

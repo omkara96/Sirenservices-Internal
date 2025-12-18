@@ -14,72 +14,80 @@ import java.util.Locale
 class UserListViewModel : ViewModel() {
 
     private val db = FirebaseFirestore.getInstance()
+    val users = MutableLiveData<List<UserModel>>()
 
-    val users = MutableLiveData<List<UserModel>?>()
-
-    // In-memory cache for fast load
     private var cachedUsers: List<UserModel>? = null
 
-    /** Load cached list immediately + refresh from Firestore in background */
     fun loadUsers(forceRefresh: Boolean = false) {
 
-        // 1. Instant UI update from cache
         if (!forceRefresh && cachedUsers != null) {
-            users.value = cachedUsers
+            users.value = cachedUsers!!.toList()
         }
 
-        // 2. Always refresh from Firestore in background
         viewModelScope.launch {
-            val freshList = fetchUsersFromFirestore()
-            cachedUsers = freshList
-            users.value = freshList
+            val fresh = fetchUsersFromFirestore()
+            cachedUsers = fresh
+            users.value = fresh.toList()
         }
     }
 
-    /** Fetch fresh list from Firestore */
     private suspend fun fetchUsersFromFirestore(): List<UserModel> {
         val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        val resultList = mutableListOf<UserModel>()
+        val result = mutableListOf<UserModel>()
 
         return try {
             val userSnaps = db.collection("users").get().await()
 
             for (snap in userSnaps) {
                 val u = snap.toObject(UserModel::class.java)
-                u.id = snap.id  // your model uses "id" for document id
+                u.id = snap.id
 
-                // ---- Load Attendance Today ----
-                val attSnap = db.collection("users")
-                    .document(snap.id)
-                    .collection("attendance")
-                    .document(today)
-                    .get()
-                    .await()
+                // Attendance
+                try {
+                    val attSnap = db.collection("users")
+                        .document(snap.id)
+                        .collection("attendance")
+                        .document(today)
+                        .get()
+                        .await()
 
-                u.attendanceToday = attSnap.getString("status") == "present"
+                    u.attendanceToday = attSnap.getString("status") == "present"
+                } catch (_: Exception) {
+                    u.attendanceToday = false
+                }
 
-                // ---- Load Trips Today ----
-                val tripSnap = db.collection("users")
-                    .document(snap.id)
-                    .collection("trips")
-                    .whereEqualTo("date", today)
-                    .get()
-                    .await()
+                // Trips
+                try {
+                    val tripSnap = db.collection("users")
+                        .document(snap.id)
+                        .collection("trips")
+                        .whereEqualTo("date", today)
+                        .get()
+                        .await()
 
-                u.tripsToday = tripSnap.size()
+                    u.tripsToday = tripSnap.size()
+                } catch (_: Exception) {
+                    u.tripsToday = 0
+                }
 
-                // ---- Load Availability ----
-                // available / occupied (driver only), rest default to available
+                // Availability (single source of truth)
                 u.availability = u.driver?.availability ?: "available"
 
-                resultList.add(u)
+                result.add(u)
             }
 
-            resultList
+            result
 
         } catch (e: Exception) {
-            // If Firestore fails, return old cache instead of empty screen
-            cachedUsers ?: emptyList()
+            cachedUsers?.toList() ?: emptyList()
         }
     }
+
+    fun updateUserDocument(userId: String, key: String, url: String) {
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(userId)
+            .update("driver.documents.$key", url)
+    }
+
 }

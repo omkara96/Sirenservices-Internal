@@ -6,41 +6,38 @@ import com.google.firebase.firestore.Exclude
 data class UserModel(
     var id: String = "",
     var userId: String = "",
-    val firstName: String = "",
-    val middleName: String? = null,
-    val lastName: String? = null,
-    val dob: String? = null,
-    val mobile: String = "",
-    val email: String? = null,
-    val address: String? = null,
-    val password: String? = "",
-    val role: String = "owner",      // owner/driver/staff/operator
-    val status: String = "active",   // active/inactive
 
-    val profilePhoto: String? = null,
+    var firstName: String = "",
+    var middleName: String? = null,
+    var lastName: String? = null,
+    var dob: String? = null,
 
-    val driver: DriverData? = null,
+    var mobile: String = "",
+    var email: String? = null,
+    var address: String? = null,
 
-    val createdAt: Timestamp? = null,
-    val updatedAt: Timestamp? = null,
+  //  @get:Exclude
+    var password: String? = null,   // NEVER deserialize password
 
-    /* ---------- NON-SAVED / RUNTIME FIELDS FOR UI ---------- */
+    var role: String = "owner",
+    var status: String = "active",
 
-    // Attendance today (loaded from /attendance/{date})
+    var profilePhoto: String? = null,
+
+    var driver: DriverData? = null,
+
+    var createdAt: Timestamp? = null,
+    var updatedAt: Timestamp? = null,
+
+    /* ---------- UI ONLY ---------- */
+
     @get:Exclude var attendanceToday: Boolean = false,
-
-    // Trips done today
     @get:Exclude var tripsToday: Int = 0,
-
-    // For all roles (not just drivers) - available / occupied / busy
     @get:Exclude var availability: String = "available",
-
-    // Future feature: salary pending
     @get:Exclude var pendingSalary: Double = 0.0,
-
-    // Future: outstanding advance
     @get:Exclude var advanceOutstanding: Double = 0.0
 )
+
 
 data class DriverData(
     val licenseNo: String? = null,

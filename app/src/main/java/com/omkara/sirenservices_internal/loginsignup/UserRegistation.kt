@@ -9,9 +9,11 @@ import android.util.Log
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -26,6 +28,9 @@ import java.util.Calendar
 class UserRegistation : AppCompatActivity() {
 
     private val vm: UserRegistrationViewModel by viewModels()
+
+    //toolbar
+    private lateinit var toolbar: MaterialToolbar
 
     // Views
     private lateinit var edtFirstName: TextInputEditText
@@ -93,9 +98,13 @@ class UserRegistation : AppCompatActivity() {
         setupDropdowns()
         setupListeners()
         observeViewModel()
+        setupToolbar()
     }
 
     private fun bindViews() {
+
+        toolbar = findViewById(R.id.toolbarRegisterUser)
+
         edtFirstName = findViewById(R.id.edtFirstName)
         edtMiddleName = findViewById(R.id.edtMiddleName)
         edtLastName = findViewById(R.id.edtLastName)
@@ -130,6 +139,11 @@ class UserRegistation : AppCompatActivity() {
         imgPan = findViewById(R.id.imgPanPreview)
         imgPassbook = findViewById(R.id.imgPassbookPreview)
         imgLicence = findViewById(R.id.imgLicencePreview)
+    }
+
+    private fun setupToolbar() {
+        // Open drawer on nav icon click
+        toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
     private fun setupDropdowns() {
@@ -234,7 +248,8 @@ class UserRegistation : AppCompatActivity() {
     private fun toggleDriverSection(show: Boolean) {
         driverSection.visibility = if (show) LinearLayout.VISIBLE else LinearLayout.GONE
     }
-
+    //val password = edtPasword.text.toString().trim()
+/*
     private fun submitForm() {
 
         val firstName = edtFirstName.text.toString().trim()
@@ -316,6 +331,87 @@ class UserRegistation : AppCompatActivity() {
                 }
             }
     }
+
+    */
+    private fun submitForm() {
+
+        val firstName = edtFirstName.text.toString().trim()
+        val mobile = edtMobile.text.toString().trim()
+        val role = autoRole.text.toString().trim()
+        val password = edtPasword.text.toString().trim()
+        val email = edtEmail.text.toString().trim()
+
+        if (firstName.isEmpty() || mobile.isEmpty() || role.isEmpty() || password.isEmpty() || email.isEmpty()) {
+            Toast.makeText(this, "Name, Email, Password, Mobile & Role required", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        btnRegister.isEnabled = false
+        btnRegister.text = "Creating account..."
+
+        // 1️⃣ CREATE AUTH USER FIRST
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener { result ->
+
+                val uid = result.user!!.uid   // 🔥 THIS IS THE KEY FIX
+
+                // Prepare documents
+                val docInputs = mutableMapOf<String, suspend () -> InputStream?>()
+
+                aadharFrontUri?.let {
+                    docInputs["aadharFront"] = { contentResolver.openInputStream(it) }
+                }
+                aadharBackUri?.let {
+                    docInputs["aadharBack"] = { contentResolver.openInputStream(it) }
+                }
+                panUri?.let {
+                    docInputs["pan"] = { contentResolver.openInputStream(it) }
+                }
+                passbookUri?.let {
+                    docInputs["passbook"] = { contentResolver.openInputStream(it) }
+                }
+                licenceUri?.let {
+                    docInputs["licence"] = { contentResolver.openInputStream(it) }
+                }
+
+                val profileProvider: suspend () -> InputStream? = {
+                    profileUri?.let { contentResolver.openInputStream(it) }
+                }
+
+                // 2️⃣ CREATE FIRESTORE USER WITH UID AS DOCUMENT ID
+                vm.registerUser(
+                    userId = uid,   // ✅ IMPORTANT
+                    firstName = firstName,
+                    middleName = edtMiddleName.text.toString(),
+                    lastName = edtLastName.text.toString(),
+                    dob = edtDob.text.toString(),
+                    mobile = mobile,
+                    email = email,
+                    address = edtAddress.text.toString(),
+                    role = role.lowercase(),   // ensure lowercase
+                    status = autoStatus.text.toString(),
+                    profileUri = profileUri,
+                    profileInputStreamProvider = profileProvider,
+                    isDriver = role == "driver",
+                    licenseNo = edtLicense.text.toString(),
+                    aadharNo = edtAadhar.text.toString(),
+                    panNo = edtPan.text.toString(),
+                    accountNo = edtAccNo.text.toString(),
+                    ifsc = edtIFSC.text.toString(),
+                    bankName = edtBankName.text.toString(),
+                    branchName = edtBranchName.text.toString(),
+                    documentInputs = if (docInputs.isEmpty()) null else docInputs,
+                    password = edtPasword.text.toString().trim() // ❌ NEVER store password in Firestore
+                )
+
+            }
+            .addOnFailureListener { e ->
+                btnRegister.isEnabled = true
+                btnRegister.text = "Save User"
+                Toast.makeText(this, "Auth failed: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
 
 
 }

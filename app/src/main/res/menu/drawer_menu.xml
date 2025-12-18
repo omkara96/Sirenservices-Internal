@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/nav_dashboard" android:title="Dashboard" android:icon="@drawable/ic_home" />
-    <item android:id="@+id/nav_users" android:title="Users" android:icon="@drawable/ic_user" />
-    <item android:id="@+id/nav_vehicles" android:title="Vehicles" android:icon="@drawable/ic_vehicle" />
-    <item android:id="@+id/nav_trips" android:title="Trips" android:icon="@drawable/ic_trip" />
-    <item android:id="@+id/nav_service" android:title="Service Records" android:icon="@drawable/ic_services" />
-    <item android:id="@+id/nav_billing" android:title="Billing" android:icon="@drawable/ic_bill" />
-    <item android:id="@+id/nav_reports" android:title="Reports" android:icon="@drawable/ic_records" />
-    <item android:id="@+id/nav_settings" android:title="Settings" android:icon="@drawable/ic_settings" />
+    <item android:id="@+id/nav_dashboard" android:title="Dashboard Home" android:icon="@drawable/ic_main_dashboard" />
+    <item android:id="@+id/nav_add_users" android:title="Add User" android:icon="@drawable/ic_user_add" />
+    <item android:id="@+id/nav_add_vehicles" android:title="Add Vehicles" android:icon="@drawable/ic_car_add" />
+    <item android:id="@+id/nav_add_trip" android:title="Create Trip" android:icon="@drawable/ic_create_trip" />
+    <item android:id="@+id/nav_manage_users" android:title="Manage Users" android:icon="@drawable/ic_manage_users" />
+    <item android:id="@+id/nav_manage_vehicles" android:title="Manage Vehicles" android:icon="@drawable/ic_manage_vehicle" />
+    <item android:id="@+id/nav_manage_trips" android:title="Manage Trips" android:icon="@drawable/ic_manage_trips" />
+    <item android:id="@+id/nav_billing_and_records" android:title="Billing and Records" android:icon="@drawable/ic_billing" />
+    <item android:id="@+id/nav_aboutapp" android:title="About App" android:icon="@drawable/ic_about_app" />
+    <item android:id="@+id/nav_aboutdeveloper" android:title="About Developer and Contact" android:icon="@drawable/ic_about_developer" />
+    <item android:id="@+id/nav_logout" android:title="Logout" android:icon="@drawable/ic_logout" />
+
 </menu>
