@@ -1,4 +1,5 @@
 package com.omkara.sirenservices_internal.models
+import com.google.firebase.firestore.PropertyName
 
 import com.google.firebase.Timestamp
 
@@ -30,7 +31,7 @@ data class TripModel(
 
     // Odometer Readings
     var start_odometer: Int? = null,   // Trip Start
-    var end_odometer: Int? = null,     // Trip End
+    var end_odometer: Int? = 0,     // Trip End
 
     // Distance & Duration
     var total_km: Double? = null,
@@ -68,6 +69,13 @@ data class TripModel(
     // Audit Info
     var created_by: String? = null,
     var created_at: Timestamp? = null,
+
+    // NEW FIELD
+    //var is_bill_generated: Boolean = false,
+    @get:PropertyName("is_bill_generated")
+    @set:PropertyName("is_bill_generated")
+    var isBillGenerated: Boolean = false,
+
 
     // Trip Status
     var status: String = "ASSIGNED",

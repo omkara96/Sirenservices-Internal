@@ -7,22 +7,24 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:paddingBottom="28dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="24dp">
 
+        <!-- ================= TRIP SUMMARY ================= -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardMain"
+            android:id="@+id/cardTripSummary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             app:cardCornerRadius="18dp"
-            app:cardElevation="5dp">
+            app:cardElevation="6dp">
 
             <LinearLayout
-                android:padding="18dp"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
                     android:id="@+id/tvTripNumber"
@@ -31,100 +33,215 @@
                     android:text="TRIP-XXXX"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="8dp"/>
 
-                <TextView android:text="Date" style="@style/viewLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView android:id="@+id/tvTripDate" style="@style/viewValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <TextView android:text="Vehicle" style="@style/viewLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView android:id="@+id/tvVehicle" style="@style/viewValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <TextView android:text="Driver" style="@style/viewLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView android:id="@+id/tvDriver" style="@style/viewValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <TextView android:text="Pickup" style="@style/viewLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView android:id="@+id/tvPickup" style="@style/viewValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <TextView android:text="Final Drop" style="@style/viewLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView android:id="@+id/tvDrop" style="@style/viewValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <TextView android:text="Intermediate Stops" style="@style/viewLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <LinearLayout
-                    android:id="@+id/layoutStops"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="12dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <TextView android:text="Trip Cost" style="@style/viewLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView android:id="@+id/tvTripCost" style="@style/viewValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <TextView android:text="Fuel Cost" style="@style/viewLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView android:id="@+id/tvFuelCost" style="@style/viewValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <TextView android:text="Servicing Cost" style="@style/viewLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView android:id="@+id/tvServicingCost" style="@style/viewValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <TextView android:text="Pending Amount" style="@style/viewLabel"
+                <TextView
+                    android:id="@+id/tvTripDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    />
-                <TextView android:id="@+id/tvPendingAmount" style="@style/viewValue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    style="@style/viewValue"/>
 
-                <TextView android:text="Payment Mode" style="@style/viewLabel"
+                <TextView
+                    android:id="@+id/tvVehicle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView android:id="@+id/tvPaymentMode" style="@style/viewValue"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+
+                <TextView
+                    android:id="@+id/tvDriver"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Edit button (hidden for completed trips) -->
+        <!-- ================= ODOMETER ================= -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardOdometer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Odometer Details"
+                    style="@style/viewLabel"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvStartOdometer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+
+                <TextView
+                    android:id="@+id/tvEndOdometer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+
+                <TextView
+                    android:id="@+id/tvFuelConsumed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ================= PATIENT DETAILS ================= -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardPatient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Patient Details"
+                    style="@style/viewLabel"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvPatientName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+
+                <TextView
+                    android:id="@+id/tvPatientContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+
+                <TextView
+                    android:id="@+id/tvCallSource"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ================= SERVICING ================= -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardServicing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Servicing During Trip"
+                    style="@style/viewLabel"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvMechanicName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+
+                <TextView
+                    android:id="@+id/tvServicingKm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+
+                <TextView
+                    android:id="@+id/tvMechanicCost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ================= FINANCIAL ================= -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardFinancial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Financial Summary"
+                    style="@style/viewLabel"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvTripCost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+
+                <TextView
+                    android:id="@+id/tvFuelCost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+
+                <TextView
+                    android:id="@+id/tvServicingCost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+
+                <TextView
+                    android:id="@+id/tvPendingAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+
+                <TextView
+                    android:id="@+id/tvHeadOfficeDeposit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/viewValue"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ================= EDIT ================= -->
         <Button
             android:id="@+id/btnEditTrip"
-            android:text="Edit Trip"
-            style="@style/Widget.Admin.PrimaryButton"
-            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Edit Trip"
+            style="@style/Widget.Admin.PrimaryButton"/>
 
     </LinearLayout>
 </ScrollView>

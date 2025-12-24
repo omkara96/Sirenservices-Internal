@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -37,6 +38,8 @@ class VehicleListActivity : AppCompatActivity() {
     private var vehiclesListener: ListenerRegistration? = null
 
     private lateinit var progressDialog: AlertDialog
+
+    private lateinit var toolbar : MaterialToolbar
 
     private val statusOptions = listOf("All", "ACTIVE", "UNDER_MAINTENANCE", "DECOMMISSIONED")
 
@@ -69,6 +72,10 @@ class VehicleListActivity : AppCompatActivity() {
         rvVehicles = findViewById(R.id.rvVehicles)
         fabAdd = findViewById(R.id.fabAdd)
         tvEmpty = findViewById(R.id.tvEmpty)
+        toolbar = findViewById(R.id.toolbarVehicleList)
+
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { finish() }
 
         // Progress dialog
         progressDialog = AlertDialog.Builder(this)
@@ -169,7 +176,7 @@ class VehicleListActivity : AppCompatActivity() {
                         // -------------------------
                         // STATUS (new model)
                         // -------------------------
-                        val status = doc.getString("vehicle_info.status") ?: "ACTIVE"
+                        val status = doc.getString("vehicle_info.status") ?: "N/A"
 
                         // -------------------------
                         // PHOTOS

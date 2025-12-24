@@ -150,5 +150,16 @@
     <color name="status_inactive">#9E9E9E</color> <!-- Grey -->
     <color name="status_maintenance">#FFC107</color> <!-- Amber -->
 
+    <!-- ALERT COLORS -->
+    <color name="alert_red">#C62828</color>
+    <color name="alert_red_bg">#FFEBEE</color>
+
+    <color name="alert_orange">#EF6C00</color>
+    <color name="alert_orange_bg">#FFF3E0</color>
+
+    <color name="alert_blue">#1565C0</color>
+    <color name="alert_blue_bg">#E3F2FD</color>
+
+
 
 </resources>

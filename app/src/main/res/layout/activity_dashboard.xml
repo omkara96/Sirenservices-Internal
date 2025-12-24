@@ -5,25 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- MAIN -->
+    <!-- ================= MAIN CONTENT ================= -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Toolbar -->
+        <!-- TOOLBAR -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbarDashboard"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:title="Main Dashboard"
-            app:subtitle="Admin Control Panal (Home)"
-            app:subtitleTextColor="?attr/colorOnPrimary"
-            app:subtitleCentered="true"
+            app:subtitle="Admin Control Panel"
             app:titleCentered="true"
+            app:subtitleCentered="true"
             app:titleTextColor="?attr/colorOnPrimary"
+            app:subtitleTextColor="?attr/colorOnPrimary"
             app:navigationIcon="@drawable/ic_menu"
-            app:navigationIconTint="?attr/colorOnPrimary"/>
+            app:navigationIconTint="?attr/colorOnPrimary" />
 
         <!-- CONTENT -->
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -34,9 +34,9 @@
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:fillViewport="true">
 
-                <!-- GRID = Rows of 2 Cards each -->
                 <LinearLayout
                     android:id="@+id/dashboardContainer"
                     android:orientation="vertical"
@@ -44,124 +44,110 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <!-- ROW 1 -->
+                    <!-- ================= USERS & VEHICLES ================= -->
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <!-- USERS CARD -->
+                        <!-- USERS -->
                         <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/cardUsers"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_margin="6dp"
                             android:layout_weight="1"
+                            android:layout_margin="6dp"
                             app:cardCornerRadius="12dp"
                             app:cardElevation="6dp">
 
                             <LinearLayout
-                                android:padding="12dp"
                                 android:orientation="vertical"
+                                android:padding="12dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
                                 <TextView
                                     android:text="Users"
-                                    style="@style/TextAppearance.Material3.TitleMedium"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    style="@style/TextAppearance.Material3.TitleMedium"/>
 
-                                <TextView
-                                    android:id="@+id/tvUsersTotal"
-                                    android:text="Total: -"
-                                    android:layout_marginTop="6dp"
+                                <TextView android:id="@+id/tvUsersTotal"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Total: -"/>
 
-                                <TextView
-                                    android:id="@+id/tvUsersActive"
-                                    android:text="Active: -"
+                                <TextView android:id="@+id/tvUsersActive"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Active: -"/>
 
-                                <TextView
-                                    android:id="@+id/tvUsersOccupied"
-                                    android:text="Occupied: -"
+                                <TextView android:id="@+id/tvUsersOccupied"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Occupied: -"/>
 
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/btnViewUsers"
                                     android:text="Open Users"
+                                    android:layout_marginTop="8dp"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="8dp" />
-
+                                    android:layout_height="wrap_content"/>
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
 
-                        <!-- VEHICLES CARD -->
+                        <!-- VEHICLES -->
                         <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/cardVehicles"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_margin="6dp"
                             android:layout_weight="1"
+                            android:layout_margin="6dp"
                             app:cardCornerRadius="12dp"
                             app:cardElevation="6dp">
 
                             <LinearLayout
-                                android:padding="12dp"
                                 android:orientation="vertical"
+                                android:padding="12dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
                                 <TextView
                                     android:text="Vehicles"
-                                    style="@style/TextAppearance.Material3.TitleMedium"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:layout_height="wrap_content"
+                                    style="@style/TextAppearance.Material3.TitleMedium"/>
 
-                                <TextView
-                                    android:id="@+id/tvVehiclesTotal"
-                                    android:text="Total: -"
-                                    android:layout_marginTop="6dp"
+                                <TextView android:id="@+id/tvVehiclesTotal"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Total: -"/>
 
-                                <TextView
-                                    android:id="@+id/tvVehiclesActive"
-                                    android:text="Available: -"
+                                <TextView android:id="@+id/tvVehiclesActive"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Available: -"/>
 
-                                <TextView
-                                    android:id="@+id/tvVehiclesMaint"
-                                    android:text="Maintenance: -"
+                                <TextView android:id="@+id/tvVehiclesMaint"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Maintenance: -"/>
 
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/btnViewVehicles"
                                     android:text="Open Vehicles"
+                                    android:layout_marginTop="8dp"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="8dp"/>
-
+                                    android:layout_height="wrap_content"/>
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
-
                     </LinearLayout>
 
-                    <!-- ROW 2 -->
+                    <!-- ================= TODAY / WEEK ================= -->
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/cardToday"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -170,40 +156,35 @@
                             app:cardElevation="6dp">
 
                             <LinearLayout
-                                android:padding="12dp"
                                 android:orientation="vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:padding="12dp">
 
                                 <TextView
                                     android:text="Today"
-                                    style="@style/TextAppearance.Material3.TitleMedium"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    style="@style/TextAppearance.Material3.TitleMedium"/>
 
-                                <TextView
-                                    android:id="@+id/tvTodayRevenue"
-                                    android:text="Revenue: ₹ -"
+                                <TextView android:id="@+id/tvTodayRevenue"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Revenue: ₹ -"/>
 
-                                <TextView
-                                    android:id="@+id/tvTodaySpend"
-                                    android:text="Spent: ₹ -"
+                                <TextView android:id="@+id/tvTodaySpend"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Spent: ₹ -"/>
 
-                                <TextView
-                                    android:id="@+id/tvTodayPending"
-                                    android:text="Pending: ₹ -"
+                                <TextView android:id="@+id/tvTodayPending"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
-
+                                    android:text="Pending: ₹ -"/>
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
 
                         <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/cardWeekly"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -212,45 +193,42 @@
                             app:cardElevation="6dp">
 
                             <LinearLayout
-                                android:padding="12dp"
                                 android:orientation="vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:padding="12dp">
 
                                 <TextView
-                                    android:text="Weekly"
-                                    style="@style/TextAppearance.Material3.TitleMedium"
+                                    android:text="This Week"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    style="@style/TextAppearance.Material3.TitleMedium"/>
 
                                 <TextView android:id="@+id/tvWeekRevenue"
-                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Revenue: ₹ -" />
-                                <TextView android:id="@+id/tvWeekSpend"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Spent: ₹ -" />
-                                <TextView android:id="@+id/tvWeekBalance"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Balance: ₹ -" />
+                                    android:text="Revenue: ₹ -"/>
 
+                                <TextView android:id="@+id/tvWeekSpend"
+                                    android:layout_height="wrap_content"
+                                    android:layout_width="wrap_content"
+                                    android:text="Spent: ₹ -"/>
+
+                                <TextView android:id="@+id/tvWeekBalance"
+                                    android:layout_height="wrap_content"
+                                    android:layout_width="wrap_content"
+                                    android:text="Balance: ₹ -"/>
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
-
-                        <!-- Add monthly, yearly, quick links similarly -->
-
                     </LinearLayout>
 
-                    <!-- Monthly -->
+                    <!-- ================= MONTH / YEAR ================= -->
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/cardMonthly"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -259,41 +237,35 @@
                             app:cardElevation="6dp">
 
                             <LinearLayout
-                                android:padding="12dp"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
                                 android:orientation="vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:padding="12dp">
 
                                 <TextView
                                     android:text="This Month"
-                                    style="@style/TextAppearance.Material3.TitleMedium"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content" />
+                                    style="@style/TextAppearance.Material3.TitleMedium"/>
 
-                                <TextView
-                                    android:id="@+id/tvMonthRevenue"
-                                    android:text="Revenue: ₹ -"
-                                    android:layout_marginTop="6dp"
+                                <TextView android:id="@+id/tvMonthRevenue"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Revenue: ₹ -"/>
 
-                                <TextView
-                                    android:id="@+id/tvMonthSpend"
-                                    android:text="Spent: ₹ -"
+                                <TextView android:id="@+id/tvMonthSpend"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Spent: ₹ -"/>
 
-                                <TextView
-                                    android:id="@+id/tvMonthDailyAvg"
-                                    android:text="Daily Avg: ₹ -"
+                                <TextView android:id="@+id/tvMonthDailyAvg"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Daily Avg: ₹ -"/>
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
 
-                        <!-- Yearly card will be placed next to Monthly -->
                         <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/cardYearly"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -302,56 +274,84 @@
                             app:cardElevation="6dp">
 
                             <LinearLayout
-                                android:padding="12dp"
                                 android:orientation="vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:padding="12dp">
 
                                 <TextView
                                     android:text="This Year"
-                                    style="@style/TextAppearance.Material3.TitleMedium"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content" />
+                                    style="@style/TextAppearance.Material3.TitleMedium"/>
 
-                                <TextView
-                                    android:id="@+id/tvYearRevenue"
-                                    android:text="Revenue: ₹ -"
-                                    android:layout_marginTop="6dp"
+                                <TextView android:id="@+id/tvYearRevenue"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Revenue: ₹ -"/>
 
-                                <TextView
-                                    android:id="@+id/tvYearSpend"
-                                    android:text="Spent: ₹ -"
+                                <TextView android:id="@+id/tvYearSpend"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Spent: ₹ -"/>
 
-                                <TextView
-                                    android:id="@+id/tvYearDailyAvg"
-                                    android:text="Daily Avg: ₹ -"
+                                <TextView android:id="@+id/tvYearDailyAvg"
+                                    android:layout_height="wrap_content"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:text="Daily Avg: ₹ -"/>
                             </LinearLayout>
-
                         </com.google.android.material.card.MaterialCardView>
-
                     </LinearLayout>
 
-                    </LinearLayout>
+                    <!-- ================= ALERTS ================= -->
+                    <TextView
+                        android:text="⚠ Alerts and Attention ⚠ "
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        style="@style/TextAppearance.Material3.TitleLarge"
+                        android:layout_marginTop="16dp"/>
 
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="6dp">
 
+                        <LinearLayout
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rvDashboardAlerts"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:nestedScrollingEnabled="false"/>
+
+                            <TextView
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:id="@+id/tvNoAlerts"
+                                android:text="No alerts 🎉"
+                                android:gravity="center"
+                                android:visibility="gone"
+                                android:padding="12dp"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
             </ScrollView>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- NAVIGATION DRAWER -->
+    <!-- ================= NAV DRAWER ================= -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/drawer_menu" />
+        app:menu="@menu/drawer_menu"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

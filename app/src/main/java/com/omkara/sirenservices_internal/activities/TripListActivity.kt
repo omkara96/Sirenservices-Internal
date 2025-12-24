@@ -2,6 +2,8 @@ package com.omkara.sirenservices_internal.activities
 
 
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
@@ -21,7 +23,7 @@ class TripListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip_list)
 
-        val toolbar = findViewById<MaterialToolbar>(R.id.toolbarTripList)
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbarTriplist)
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { finish() }
 
@@ -36,4 +38,6 @@ class TripListActivity : AppCompatActivity() {
             tab.text = titles[pos]
         }.attach()
     }
+
+
 }

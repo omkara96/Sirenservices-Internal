@@ -3,34 +3,47 @@ package com.omkara.sirenservices_internal.activities
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omkara.sirenservices_internal.R
 import com.omkara.sirenservices_internal.models.TripModel
 
 class EditTripActivity : AppCompatActivity() {
 
-    private lateinit var db: FirebaseFirestore
+    private val db = FirebaseFirestore.getInstance()
     private lateinit var tripId: String
-    private var tripData: TripModel? = null
+    private lateinit var tripData: TripModel
 
-    // Views
+    /* -------- READ ONLY -------- */
     private lateinit var tvTripNumber: TextView
     private lateinit var tvPickup: TextView
     private lateinit var tvDrop: TextView
     private lateinit var tvVehicle: TextView
     private lateinit var tvDriver: TextView
 
-    private lateinit var statusDropdown: MaterialAutoCompleteTextView
-    private lateinit var etFuelCost: TextInputEditText
+    /* -------- EDITABLE -------- */
+    private lateinit var dropdownTripStatus: MaterialAutoCompleteTextView
+
+    private lateinit var etStartOdometer: TextInputEditText
+    private lateinit var etEndOdometer: TextInputEditText
+    private lateinit var etFuelLiters: TextInputEditText
+
+    private lateinit var etPatientName: TextInputEditText
+    private lateinit var etPatientContact: TextInputEditText
+    private lateinit var etCallSource: TextInputEditText
+
+    private lateinit var etMechanicName: TextInputEditText
+    private lateinit var etServicingKm: TextInputEditText
     private lateinit var etMechanicCost: TextInputEditText
+
+    private lateinit var etFuelCost: TextInputEditText
     private lateinit var etServicingCost: TextInputEditText
     private lateinit var etPendingAmount: TextInputEditText
-    private lateinit var etHODeposit: TextInputEditText
-    private lateinit var etNewStop: TextInputEditText
+    private lateinit var etHeadOfficeDeposit: TextInputEditText
 
-    private lateinit var stopsList: LinearLayout
+    private lateinit var layoutStops: LinearLayout
+    private lateinit var etAddStop: TextInputEditText
     private lateinit var btnAddStop: ImageButton
     private lateinit var btnSave: Button
 
@@ -38,178 +51,190 @@ class EditTripActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_trip)
 
-        db = FirebaseFirestore.getInstance()
-        tripId = intent.getStringExtra("trip_id") ?: ""
+        tripId = intent.getStringExtra("trip_id") ?: run {
+            finish(); return
+        }
 
-        initViews()
+        bindViews()
+        setupDropdown()
+        setupActions()
         loadTrip()
     }
 
-    private fun initViews() {
+    /* ================= INIT ================= */
+
+    private fun bindViews() {
         tvTripNumber = findViewById(R.id.tvTripNumber)
         tvPickup = findViewById(R.id.tvPickup)
         tvDrop = findViewById(R.id.tvDrop)
         tvVehicle = findViewById(R.id.tvVehicle)
         tvDriver = findViewById(R.id.tvDriver)
 
-        statusDropdown = findViewById(R.id.dropdownTripStatus)
-        etFuelCost = findViewById(R.id.etFuelCost)
+        dropdownTripStatus = findViewById(R.id.dropdownTripStatus)
+
+        etStartOdometer = findViewById(R.id.etStartOdometer)
+        etEndOdometer = findViewById(R.id.etEndOdometer)
+        etFuelLiters = findViewById(R.id.etFuelConsumed)
+
+        etPatientName = findViewById(R.id.etPatientName)
+        etPatientContact = findViewById(R.id.etPatientContact)
+        etCallSource = findViewById(R.id.etCallSource)
+
+        etMechanicName = findViewById(R.id.etMechanicName)
+        etServicingKm = findViewById(R.id.etServicingKm)
         etMechanicCost = findViewById(R.id.etMechanicCost)
+
+        etFuelCost = findViewById(R.id.etFuelCost)
         etServicingCost = findViewById(R.id.etServicingCost)
         etPendingAmount = findViewById(R.id.etPendingAmount)
-        etHODeposit = findViewById(R.id.etHeadOfficeDeposit)
-        etNewStop = findViewById(R.id.etAddStop)
+        etHeadOfficeDeposit = findViewById(R.id.etHeadOfficeDeposit)
 
-        stopsList = findViewById(R.id.layoutStopsContainer)
+        layoutStops = findViewById(R.id.layoutStopsContainer)
+        etAddStop = findViewById(R.id.etAddStop)
         btnAddStop = findViewById(R.id.btnAddStop)
         btnSave = findViewById(R.id.btnSaveChanges)
-
-        btnAddStop.setOnClickListener { addStop() }
-        btnSave.setOnClickListener { saveChanges() }
-
-       // statusDropdown.setSimpleItems(arrayOf("ASSIGNED", "ONGOING", "COMPLETED"))
-        val statusList = listOf("ASSIGNED", "ONGOING", "COMPLETED")
-        val adapterStatus = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            statusList
-        )
-        statusDropdown.setAdapter(adapterStatus)
-
-        statusDropdown.setOnClickListener {
-            statusDropdown.showDropDown()
-        }
     }
+
+    private fun setupDropdown() {
+        val statuses = listOf("ASSIGNED", "ONGOING", "COMPLETED")
+        dropdownTripStatus.setAdapter(
+            ArrayAdapter(this, android.R.layout.simple_list_item_1, statuses)
+        )
+    }
+
+    private fun setupActions() {
+        btnAddStop.setOnClickListener { addStop() }
+        btnSave.setOnClickListener { saveTrip() }
+    }
+
+    /* ================= LOAD ================= */
 
     private fun loadTrip() {
-        db.collection("trips").document(tripId)
-            .get()
-            .addOnSuccessListener { snap ->
-                val trip = snap.toObject(TripModel::class.java)
-                tripData = trip
-
+        db.collection("trips").document(tripId).get()
+            .addOnSuccessListener {
+                val trip = it.toObject(TripModel::class.java)
                 if (trip == null) {
-                    Toast.makeText(this, "Trip not found!", Toast.LENGTH_LONG).show()
-                    finish()
-                    return@addOnSuccessListener
+                    Toast.makeText(this, "Trip not found", Toast.LENGTH_LONG).show()
+                    finish(); return@addOnSuccessListener
                 }
-
-                updateUI(trip)
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed: ${it.message}", Toast.LENGTH_LONG).show()
+                tripData = trip
+                populateUI()
             }
     }
 
-    private fun updateUI(t: TripModel) {
-        // READ ONLY fields
-        tvTripNumber.text = t.trip_number
-        tvPickup.text = t.pickup
-        tvDrop.text = t.final_drop
-        tvVehicle.text = t.vehicle_display
-        tvDriver.text = t.driver_display
+    private fun populateUI() {
 
-        // Editable fields
-        statusDropdown.setText(t.status, false)
-        etFuelCost.setText(t.fuel_cost.toString())
-        etMechanicCost.setText(t.mechanic_cost.toString())
-        etServicingCost.setText(t.servicing_cost.toString())
-        etPendingAmount.setText(t.pending_amount.toString())
-        etHODeposit.setText(t.head_office_deposit.toString())
+        tvTripNumber.text = tripData.trip_number
+        tvPickup.text = tripData.pickup ?: ""
+        tvDrop.text = tripData.final_drop ?: ""
+        tvVehicle.text = tripData.vehicle_display ?: ""
+        tvDriver.text = tripData.driver_display ?: ""
 
-        renderStops(t.intermediate_stops ?: emptyList())
+        dropdownTripStatus.setText(tripData.status, false)
 
-        // Lock if COMPLETED
-        if (t.status == "COMPLETED") disableEditing()
+        etStartOdometer.setText((tripData.start_odometer ?: 0).toString())
+
+        val endOdo = tripData.end_odometer ?: 0
+        etEndOdometer.setText(if (endOdo > 0) endOdo.toString() else "")
+
+        etFuelLiters.setText(tripData.fuel_liters.toString())
+
+        etPatientName.setText(tripData.patient_name ?: "")
+        etPatientContact.setText(tripData.patient_number ?: "")
+        etCallSource.setText(tripData.call_source ?: "")
+
+        etMechanicName.setText(tripData.mechanic_name ?: "")
+        etServicingKm.setText((tripData.servicing_km ?: 0).toString())
+        etMechanicCost.setText(tripData.mechanic_cost.toString())
+
+        etFuelCost.setText(tripData.fuel_cost.toString())
+        etServicingCost.setText(tripData.servicing_cost.toString())
+        etPendingAmount.setText(tripData.pending_amount.toString())
+        etHeadOfficeDeposit.setText(tripData.head_office_deposit.toString())
+
+        renderStops(tripData.intermediate_stops)
+
+        if (tripData.status == "COMPLETED") disableEditing()
     }
+
+    /* ================= STOPS ================= */
 
     private fun renderStops(stops: List<String>) {
-        stopsList.removeAllViews()
-
-        for (stop in stops) {
-            val view = layoutInflater.inflate(R.layout.item_stop, stopsList, false)
-            val tvStop = view.findViewById<TextView>(R.id.tvStopName)
-            val deleteBtn = view.findViewById<ImageButton>(R.id.btnDeleteStop)
-
-            tvStop.text = stop
-
-            deleteBtn.setOnClickListener {
-                tripData?.intermediate_stops?.remove(stop)
-                renderStops(tripData?.intermediate_stops ?: emptyList())
-            }
-
-            stopsList.addView(view)
+        layoutStops.removeAllViews()
+        if (stops.isEmpty()) {
+            val tv = TextView(this)
+            tv.text = "No intermediate stops"
+            layoutStops.addView(tv)
+            return
+        }
+        stops.forEach {
+            val tv = TextView(this)
+            tv.text = "• $it"
+            layoutStops.addView(tv)
         }
     }
 
     private fun addStop() {
-        val newStop = etNewStop.text.toString().trim()
-        if (newStop.isEmpty()) {
-            etNewStop.error = "Stop cannot be empty"
-            return
+        val stop = etAddStop.text.toString().trim()
+        if (stop.isEmpty()) return
+        tripData.intermediate_stops.add(stop)
+        etAddStop.text?.clear()
+        renderStops(tripData.intermediate_stops)
+    }
+
+    /* ================= SAVE ================= */
+
+    private fun saveTrip() {
+
+        val status = dropdownTripStatus.text.toString()
+        val startOdo = tripData.start_odometer ?: 0
+        val endOdo = etEndOdometer.text.toString().toIntOrNull()
+
+        if (status == "COMPLETED") {
+            if (endOdo == null || endOdo <= startOdo) {
+                etEndOdometer.error = "End odometer must be greater than start"
+                return
+            }
         }
 
-        tripData?.intermediate_stops?.add(newStop)
-        etNewStop.text?.clear()
-        renderStops(tripData?.intermediate_stops ?: emptyList())
+        val updateMap = mutableMapOf<String, Any>(
+            "status" to status,
+            "end_odometer" to (endOdo ?: 0),
+            "fuel_liters" to (etFuelLiters.text.toString().toDoubleOrNull() ?: 0.0),
+            "patient_name" to etPatientName.text.toString(),
+            "patient_number" to etPatientContact.text.toString(),
+            "call_source" to etCallSource.text.toString(),
+            "mechanic_name" to etMechanicName.text.toString(),
+            "servicing_km" to (etServicingKm.text.toString().toIntOrNull() ?: 0),
+            "mechanic_cost" to (etMechanicCost.text.toString().toDoubleOrNull() ?: 0.0),
+            "fuel_cost" to (etFuelCost.text.toString().toDoubleOrNull() ?: 0.0),
+            "servicing_cost" to (etServicingCost.text.toString().toDoubleOrNull() ?: 0.0),
+            "pending_amount" to (etPendingAmount.text.toString().toDoubleOrNull() ?: 0.0),
+            "head_office_deposit" to (etHeadOfficeDeposit.text.toString().toDoubleOrNull() ?: 0.0),
+            "intermediate_stops" to tripData.intermediate_stops
+        )
+
+        db.collection("trips").document(tripId).update(updateMap)
+            .addOnSuccessListener {
+                if (status == "COMPLETED") updateVehicleStatus(tripData.vehicle_id, tripData.driver_id)
+                Toast.makeText(this, "Trip updated", Toast.LENGTH_LONG).show()
+
+                finish()
+            }
+    }
+
+    private fun updateVehicleStatus(vehicleId: String?, tripDriverId: String?) {
+        if (vehicleId == null) return
+        db.collection("vehicles").document(vehicleId).update("status", "ACTIVE")
+        db.collection("vehicles").document(vehicleId).update("current_trip_id", null)
+        if (tripDriverId != null) {
+            db.collection("users").document(tripDriverId).update("status", "active")
+            db.collection("users").document(tripDriverId).update("current_trip_id", null)
+        }
     }
 
     private fun disableEditing() {
-        // Disable inputs
-        statusDropdown.isEnabled = false
-        etFuelCost.isEnabled = false
-        etMechanicCost.isEnabled = false
-        etServicingCost.isEnabled = false
-        etPendingAmount.isEnabled = false
-        etHODeposit.isEnabled = false
-        etNewStop.isEnabled = false
-        btnAddStop.isEnabled = false
-
         btnSave.isEnabled = false
         btnSave.text = "Trip Completed"
     }
-
-    private fun saveChanges() {
-        val updateMap = HashMap<String, Any?>().apply {
-            put("status", statusDropdown.text.toString())
-            put("fuel_cost", etFuelCost.text.toString().toDoubleOrNull() ?: 0.0)
-            put("mechanic_cost", etMechanicCost.text.toString().toDoubleOrNull() ?: 0.0)
-            put("servicing_cost", etServicingCost.text.toString().toDoubleOrNull() ?: 0.0)
-            put("pending_amount", etPendingAmount.text.toString().toDoubleOrNull() ?: 0.0)
-            put("head_office_deposit", etHODeposit.text.toString().toDoubleOrNull() ?: 0.0)
-            put("intermediate_stops", tripData?.intermediate_stops ?: emptyList<String>())
-        }
-
-
-
-        db.collection("trips").document(tripId)
-            .update(updateMap)
-            .addOnSuccessListener {
-                // Update vehicle ONLY if trip became COMPLETED
-                if (statusDropdown.text.toString() == "COMPLETED") {
-                    updateVehicleStatusToAvailable(tripData?.vehicle_id)
-                }
-                Toast.makeText(this, "Trip updated!", Toast.LENGTH_LONG).show()
-                finish()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed: ${it.message}", Toast.LENGTH_LONG).show()
-            }
-    }
-
-
-    private fun updateVehicleStatusToAvailable(vehicleId: String?) {
-        if (vehicleId.isNullOrEmpty()) return
-
-        db.collection("vehicles")
-            .document(vehicleId)
-            .update("status", "AVAILABLE")
-            .addOnSuccessListener {
-                Toast.makeText(this, "Vehicle marked as Available", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to update vehicle status", Toast.LENGTH_SHORT).show()
-            }
-    }
-
 }

@@ -1,139 +1,214 @@
 package com.omkara.sirenservices_internal.activities
 
+import android.app.Activity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omkara.sirenservices_internal.R
-import com.omkara.sirenservices_internal.models.ParticularModel
+import com.omkara.sirenservices_internal.models.BillComponent
 
 class BillGeneratorActivity : AppCompatActivity() {
 
-    private lateinit var db: FirebaseFirestore
+    private val db = FirebaseFirestore.getInstance()
     private lateinit var tripId: String
 
-    private lateinit var particularsContainer: LinearLayout
-    private lateinit var btnAddParticular: ImageButton
-    private lateinit var btnSave: Button
+    /* ---------- DATA ---------- */
+    private var tripCost = 0.0
+    private var gstAmount = 0.0
+    private var finalTotal = 0.0
+    private var isEditMode = false
+
+    private val components = mutableListOf<BillComponent>()
+
+    /* ---------- VIEWS ---------- */
+    private lateinit var tvTripId: TextView
+    private lateinit var tvTripNumber: TextView
+    private lateinit var tvTripCost: TextView
+    private lateinit var tvFinalTotal: TextView
 
     private lateinit var etInvoiceFor: TextInputEditText
-    private lateinit var etAdjustments: TextInputEditText
-    private lateinit var tvSubtotal: TextView
-
-    private val particularsList = mutableListOf<ParticularModel>()
+    private lateinit var componentsContainer: LinearLayout
+    private lateinit var cbGst: CheckBox
+    private lateinit var etGstPercent: TextInputEditText
+    private lateinit var tilGstPercent: View
+    private lateinit var btnSaveBill: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bill_generator)
 
-        db = FirebaseFirestore.getInstance()
-        tripId = intent.getStringExtra("trip_id") ?: ""
+        tripId = intent.getStringExtra("trip_id") ?: run {
+            finish(); return
+        }
 
-        initViews()
-       // loadExistingBill()
+        bindViews()
+        setupActions()
+        loadTripDetails()
+        loadExistingBillIfAny()
     }
 
-    private fun initViews() {
-        particularsContainer = findViewById(R.id.particularsContainer)
-        btnAddParticular = findViewById(R.id.btnAddParticular)
-        btnSave = findViewById(R.id.btnSaveBill)
+    /* ================= INIT ================= */
+
+    private fun bindViews() {
+        tvTripId = findViewById(R.id.tvTripId)
+        tvTripNumber = findViewById(R.id.tvTripNumber)
+        tvTripCost = findViewById(R.id.tvTripCost)
+        tvFinalTotal = findViewById(R.id.tvFinalTotal)
 
         etInvoiceFor = findViewById(R.id.etInvoiceFor)
-        etAdjustments = findViewById(R.id.etAdjustments)
-        tvSubtotal = findViewById(R.id.tvSubtotal)
+        componentsContainer = findViewById(R.id.componentsContainer)
+        cbGst = findViewById(R.id.cbGst)
+        etGstPercent = findViewById(R.id.etGstPercent)
+        tilGstPercent = findViewById(R.id.tilGstPercent)
+        btnSaveBill = findViewById(R.id.btnGeneratePdf) // reuse button
 
-        btnAddParticular.setOnClickListener { addParticularRow() }
-        btnSave.setOnClickListener { saveBill() }
+        findViewById<ImageButton>(R.id.btnAddComponent)
+            .setOnClickListener { addComponentRow() }
     }
 
-    private fun addParticularRow(model: ParticularModel? = null) {
-        val view = layoutInflater.inflate(R.layout.item_particular, particularsContainer, false)
+    private fun setupActions() {
 
-        val etName = view.findViewById<TextInputEditText>(R.id.etParticularName)
-        val etQty = view.findViewById<TextInputEditText>(R.id.etQty)
-        val etRate = view.findViewById<TextInputEditText>(R.id.etRate)
-        val tvAmount = view.findViewById<TextView>(R.id.tvAmount)
-        val deleteBtn = view.findViewById<ImageButton>(R.id.btnDeleteParticular)
-
-        val item = model ?: ParticularModel("", 0, 0.0, 0.0)
-        particularsList.add(item)
-
-        etName.setText(item.name)
-        etQty.setText(item.qty.toString())
-        etRate.setText(item.rate.toString())
-        tvAmount.text = "Amount: ₹${item.amount}"
-
-        val watcher = {
-            val q = etQty.text.toString().toIntOrNull() ?: 0
-            val r = etRate.text.toString().toDoubleOrNull() ?: 0.0
-            item.qty = q
-            item.rate = r
-            item.amount = q * r
-            tvAmount.text = "Amount: ₹${item.amount}"
-            updateSubtotal()
+        cbGst.setOnCheckedChangeListener { _, checked ->
+            tilGstPercent.visibility = if (checked) View.VISIBLE else View.GONE
+            updateTotals()
         }
 
-        etQty.addTextChangedListener { watcher() }
-        etRate.addTextChangedListener { watcher() }
+        etGstPercent.addTextChangedListener { updateTotals() }
 
-        deleteBtn.setOnClickListener {
-            particularsList.remove(item)
-            particularsContainer.removeView(view)
-            updateSubtotal()
+        btnSaveBill.setOnClickListener { saveBill() }
+    }
+
+    /* ================= LOAD ================= */
+
+    private fun loadTripDetails() {
+        db.collection("trips").document(tripId).get()
+            .addOnSuccessListener { snap ->
+
+                tvTripId.text = "Trip ID: $tripId"
+                tvTripNumber.text = "Trip Number: ${snap.getString("trip_number") ?: "-"}"
+
+                tripCost = snap.getDouble("trip_cost") ?: 0.0
+                tvTripCost.text = "₹$tripCost"
+
+                etInvoiceFor.setText(snap.getString("patient_name") ?: "")
+                updateTotals()
+            }
+    }
+
+    private fun loadExistingBillIfAny() {
+        db.collection("bills").document(tripId).get()
+            .addOnSuccessListener { snap ->
+                if (!snap.exists()) return@addOnSuccessListener
+
+                isEditMode = true
+                btnSaveBill.text = "Update Bill"
+
+                etInvoiceFor.setText(snap.getString("invoice_for") ?: "")
+
+                cbGst.isChecked = snap.getBoolean("gst_enabled") == true
+                etGstPercent.setText(
+                    snap.getDouble("gst_percent")?.toString() ?: ""
+                )
+
+                val list = snap.get("components") as? List<Map<String, Any>> ?: emptyList()
+                list.forEach {
+                    val component = BillComponent(
+                        name = it["name"] as String,
+                        amount = (it["amount"] as Number).toDouble()
+                    )
+                    components.add(component)
+                    addComponentRow(component)
+                }
+
+                updateTotals()
+            }
+    }
+
+    /* ================= COMPONENTS ================= */
+
+    private fun addComponentRow(existing: BillComponent? = null) {
+
+        val view = layoutInflater.inflate(
+            R.layout.item_bill_component,
+            componentsContainer,
+            false
+        )
+
+        val etName = view.findViewById<TextInputEditText>(R.id.etComponentName)
+        val etAmount = view.findViewById<TextInputEditText>(R.id.etComponentAmount)
+        val btnDelete = view.findViewById<ImageButton>(R.id.btnDeleteComponent)
+
+        val component = existing ?: BillComponent().also { components.add(it) }
+
+        etName.setText(component.name)
+        etAmount.setText(component.amount.toString())
+
+        etName.addTextChangedListener { component.name = it.toString() }
+        etAmount.addTextChangedListener {
+            component.amount = it.toString().toDoubleOrNull() ?: 0.0
+            updateTotals()
         }
 
-        particularsContainer.addView(view)
-        updateSubtotal()
+        btnDelete.setOnClickListener {
+            components.remove(component)
+            componentsContainer.removeView(view)
+            updateTotals()
+        }
+
+        componentsContainer.addView(view)
     }
 
-    private fun updateSubtotal() {
-        val total = particularsList.sumOf { it.amount }
-        tvSubtotal.text = "₹$total"
+    /* ================= TOTAL ================= */
+
+    private fun updateTotals() {
+        val componentTotal = components.sumOf { it.amount }
+        val subTotal = tripCost + componentTotal
+
+        gstAmount = if (cbGst.isChecked) {
+            val percent = etGstPercent.text.toString().toDoubleOrNull() ?: 0.0
+            subTotal * percent / 100
+        } else 0.0
+
+        finalTotal = subTotal + gstAmount
+        tvFinalTotal.text = "Total: ₹$finalTotal"
     }
 
-
+    /* ================= SAVE ================= */
 
     private fun saveBill() {
-        val subtotal = particularsList.sumOf { it.amount }
-        val adjustments = etAdjustments.text.toString().toDoubleOrNull() ?: 0.0
-        val finalTotal = subtotal + adjustments
 
-        val bill = hashMapOf(
+        val billData = hashMapOf(
             "trip_id" to tripId,
-            "invoice_for" to etInvoiceFor.text.toString(),
-            "invoice_date" to FieldValue.serverTimestamp(),
-            "bill_number" to "BILL-${System.currentTimeMillis()}",
-            "subtotal" to subtotal,
-            "adjustments" to adjustments,
+            "invoice_for" to etInvoiceFor.text.toString().trim(),
+            "base_trip_cost" to tripCost,
+            "components" to components.map {
+                mapOf("name" to it.name, "amount" to it.amount)
+            },
+            "gst_enabled" to cbGst.isChecked,
+            "gst_percent" to (etGstPercent.text.toString().toDoubleOrNull() ?: 0.0),
+            "gst_amount" to gstAmount,
             "total_amount" to finalTotal,
-            "particulars" to particularsList.map {
-                mapOf(
-                    "name" to it.name,
-                    "qty" to it.qty,
-                    "rate" to it.rate,
-                    "amount" to it.amount
-                )
-            }
+            "updated_at" to FieldValue.serverTimestamp()
         )
 
         db.collection("bills").document(tripId)
-            .set(bill)
+            .set(billData)
             .addOnSuccessListener {
-                Toast.makeText(this, "Bill saved", Toast.LENGTH_SHORT).show()
+                db.collection("trips")
+                    .document(tripId)
+                    .update("is_bill_generated", true)
+
+                Toast.makeText(this, "Bill saved successfully", Toast.LENGTH_LONG).show()
                 finish()
             }
             .addOnFailureListener {
-                Toast.makeText(this, "Failed: ${it.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
             }
+
     }
 }

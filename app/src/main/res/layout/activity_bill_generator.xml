@@ -1,83 +1,125 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:hint="Invoice For"
-            android:layout_height="wrap_content"
+        <!-- Trip Info -->
+        <TextView
+            android:id="@+id/tvTripId"
+            android:text="Trip ID:"
+            android:textStyle="bold"
             android:layout_width="match_parent"
-            >
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:id="@+id/etInvoiceFor"/>
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"/>
 
         <TextView
-            android:text="Particulars"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_height="wrap_content"
+            android:id="@+id/tvTripNumber"
+            android:text="Trip Number:"
+            android:layout_marginBottom="12dp"
             android:layout_width="match_parent"
-            android:layout_marginTop="16dp"/>
+            android:layout_height="wrap_content"/>
+
+
+        <!-- Invoice For -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:hint="Invoice For"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etInvoiceFor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <!-- Trip Cost -->
+        <TextView
+            android:text="Trip Cost"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tvTripCost"
+            android:text="₹0"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Components -->
+        <TextView
+            android:text="Bill Components"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <LinearLayout
-            android:id="@+id/particularsContainer"
+            android:id="@+id/componentsContainer"
             android:orientation="vertical"
-            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <ImageButton
-            android:id="@+id/btnAddParticular"
+            android:id="@+id/btnAddComponent"
             android:src="@drawable/ic_add"
+            android:background="@android:color/transparent"
             android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"/>
+            android:layout_height="48dp"/>
 
-        <TextView
-            android:text="Subtotal"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:textStyle="bold"
-            android:layout_marginTop="12dp"/>
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:id="@+id/tvSubtotal"
-            android:text="₹0"/>
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:text="Adjustments"
-            android:textStyle="bold"
-            android:layout_marginTop="12dp"/>
+        <!-- GST -->
+        <CheckBox
+            android:id="@+id/cbGst"
+            android:text="Apply GST"
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent">
+            android:id="@+id/tilGstPercent"
+            android:hint="GST %"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
             <com.google.android.material.textfield.TextInputEditText
-                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:id="@+id/etAdjustments"
-                android:inputType="number"/>
+                android:layout_height="wrap_content"
+                android:id="@+id/etGstPercent"
+                android:inputType="numberDecimal"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Total -->
+        <TextView
+            android:id="@+id/tvFinalTotal"
+            android:text="Total: ₹0"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Buttons -->
         <Button
-            android:id="@+id/btnSaveBill"
-            android:text="Save Bill"
-            style="@style/Widget.Admin.PrimaryButton"
-            android:layout_marginTop="24dp"/>
+            android:id="@+id/btnGeneratePdf"
+            android:text="Generate PDF"
+            android:layout_marginTop="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btnViewPdf"
+            android:text="View PDF"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
-
 </ScrollView>

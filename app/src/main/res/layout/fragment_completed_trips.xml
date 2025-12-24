@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_weight="1"
+            android:layout_marginRight="8dp"
             android:hint="Search"
             app:startIconDrawable="@drawable/ic_search">
 
@@ -32,6 +33,9 @@
             android:id="@+id/btnFilterDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/muli_black"
+            android:drawableStart="@drawable/ic_calendar"
+            android:layout_marginStart="2dp"
             android:text="Date" />
     </LinearLayout>
 
@@ -39,7 +43,7 @@
         android:id="@+id/rvCompletedTrips"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="14dp" />
 
     <TextView
         android:id="@+id/tvNoCompleted"

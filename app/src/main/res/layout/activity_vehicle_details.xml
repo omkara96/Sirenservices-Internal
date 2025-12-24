@@ -28,7 +28,9 @@
                 android:background="?attr/colorPrimary"
                 android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
                 app:navigationIcon="@drawable/ic_arrow_back"
-                app:title="Vehicle Details" />
+                app:navigationIconTint="?attr/colorOnPrimary"
+                app:title="Vehicle Info"
+                app:subtitle="Vehicle information in detail"/>
 
             <LinearLayout
                 android:id="@+id/headerLayout"

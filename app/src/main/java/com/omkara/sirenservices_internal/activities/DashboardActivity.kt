@@ -7,82 +7,105 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.navigation.NavigationView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omkara.sirenservices_internal.R
+import com.omkara.sirenservices_internal.adapter.DashboardAlertAdapter
 import com.omkara.sirenservices_internal.loginsignup.LoginActivity
 import com.omkara.sirenservices_internal.loginsignup.UserRegistation
 import com.omkara.sirenservices_internal.loginsignup.VehicleRegistrationActivity
-import com.omkara.sirenservices_internal.models.ComplianceCurrent
-import com.omkara.sirenservices_internal.models.ComplianceModel
-import com.omkara.sirenservices_internal.models.ComplianceSection
-import com.omkara.sirenservices_internal.models.TripModel
+import com.omkara.sirenservices_internal.models.*
 import java.text.NumberFormat
-import java.time.Duration
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DashboardActivity : AppCompatActivity() {
 
     private val TAG = "DashboardActivity"
+    private val ALERT_EXPIRY_DAYS = 7
 
+    /* ---------------- UI ---------------- */
     private lateinit var drawer: DrawerLayout
     private lateinit var navView: NavigationView
     private lateinit var toolbar: MaterialToolbar
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
-    // User UI
-    private lateinit var tvUsersTotal: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvUsersActive: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvUsersOccupied: com.google.android.material.textview.MaterialTextView
+    // Users
+    private lateinit var tvUsersTotal: MaterialTextView
+    private lateinit var tvUsersActive: MaterialTextView
+    private lateinit var tvUsersOccupied: MaterialTextView
     private lateinit var btnViewUsers: MaterialButton
 
-    // Vehicle UI
-    private lateinit var tvVehiclesTotal: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvVehiclesActive: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvVehiclesMaint: com.google.android.material.textview.MaterialTextView
+    // Vehicles
+    private lateinit var tvVehiclesTotal: MaterialTextView
+    private lateinit var tvVehiclesActive: MaterialTextView
+    private lateinit var tvVehiclesMaint: MaterialTextView
     private lateinit var btnViewVehicles: MaterialButton
 
-    // Trips UI - Today
-    private lateinit var tvTodayRevenue: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvTodaySpend: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvTodayPending: com.google.android.material.textview.MaterialTextView
-   // private lateinit var btnViewTrips: MaterialButton
+    // Today
+    private lateinit var tvTodayRevenue: MaterialTextView
+    private lateinit var tvTodaySpend: MaterialTextView
+    private lateinit var tvTodayPending: MaterialTextView
 
     // Week
-    private lateinit var tvWeekRevenue: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvWeekSpend: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvWeekBalance: com.google.android.material.textview.MaterialTextView
+    private lateinit var tvWeekRevenue: MaterialTextView
+    private lateinit var tvWeekSpend: MaterialTextView
+    private lateinit var tvWeekBalance: MaterialTextView
 
     // Month
-    private lateinit var tvMonthRevenue: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvMonthSpend: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvMonthDailyAvg: com.google.android.material.textview.MaterialTextView
+    private lateinit var tvMonthRevenue: MaterialTextView
+    private lateinit var tvMonthSpend: MaterialTextView
+    private lateinit var tvMonthDailyAvg: MaterialTextView
 
     // Year
-    private lateinit var tvYearRevenue: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvYearSpend: com.google.android.material.textview.MaterialTextView
-    private lateinit var tvYearDailyAvg: com.google.android.material.textview.MaterialTextView
+    private lateinit var tvYearRevenue: MaterialTextView
+    private lateinit var tvYearSpend: MaterialTextView
+    private lateinit var tvYearDailyAvg: MaterialTextView
 
+    // Alerts
+    private lateinit var rvAlerts: RecyclerView
+    private lateinit var tvNoAlerts: MaterialTextView
+    private lateinit var alertAdapter: DashboardAlertAdapter
+    private val alertList = mutableListOf<DashboardAlert>()
+
+    private val complianceDateFormat =
+        SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
+
+    /* ---------------- Firebase ---------------- */
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    private val nf: NumberFormat = NumberFormat.getCurrencyInstance(Locale("en", "IN")).apply {
+    private val nf = NumberFormat.getCurrencyInstance(Locale("en", "IN")).apply {
         maximumFractionDigits = 0
     }
+
+    /* ================= LIFECYCLE ================= */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
-        // views
+        bindViews()
+        setupToolbar()
+        setupListeners()
+        setupAlertsRecycler()
+
+        swipeRefresh.isRefreshing = true
+        loadAllStats()
+    }
+
+    /* ================= INIT ================= */
+
+    private fun bindViews() {
         drawer = findViewById(R.id.drawer)
         navView = findViewById(R.id.navView)
         toolbar = findViewById(R.id.toolbarDashboard)
@@ -101,7 +124,6 @@ class DashboardActivity : AppCompatActivity() {
         tvTodayRevenue = findViewById(R.id.tvTodayRevenue)
         tvTodaySpend = findViewById(R.id.tvTodaySpend)
         tvTodayPending = findViewById(R.id.tvTodayPending)
-     //   btnViewTrips = findViewById(R.id.btnViewTrips)
 
         tvWeekRevenue = findViewById(R.id.tvWeekRevenue)
         tvWeekSpend = findViewById(R.id.tvWeekSpend)
@@ -115,217 +137,285 @@ class DashboardActivity : AppCompatActivity() {
         tvYearSpend = findViewById(R.id.tvYearSpend)
         tvYearDailyAvg = findViewById(R.id.tvYearDailyAvg)
 
-
-     //   migrateAllVehiclesToNewComplianceModel()  // --Only one time run was necessary
-        setupToolbar()
-        setupListeners()
-
-        // initial load
-        swipeRefresh.isRefreshing = true
-        loadAllStats()
+        rvAlerts = findViewById(R.id.rvDashboardAlerts)
+        tvNoAlerts = findViewById(R.id.tvNoAlerts)
     }
 
     private fun setupToolbar() {
-        // Open drawer on nav icon click
         toolbar.setNavigationOnClickListener {
             drawer.openDrawer(GravityCompat.START)
         }
     }
 
     private fun setupListeners() {
-        swipeRefresh.setOnRefreshListener {
-            loadAllStats()
-        }
+        swipeRefresh.setOnRefreshListener { loadAllStats() }
 
         btnViewUsers.setOnClickListener {
-            // navigate to users list
-            startActivity(Intent(this, com.omkara.sirenservices_internal.activities.ListUserActivity::class.java))
+            startActivity(Intent(this, ListUserActivity::class.java))
         }
 
         btnViewVehicles.setOnClickListener {
-            startActivity(Intent(this, com.omkara.sirenservices_internal.activities.VehicleListActivity::class.java))
+            startActivity(Intent(this, VehicleListActivity::class.java))
         }
 
-//        btnViewTrips.setOnClickListener {
-//            startActivity(Intent(this, com.omkara.sirenservices_internal.activities.TripListActivity::class.java))
-//        }
-
-        // nav item clicks (optional)
-        navView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
+        navView.setNavigationItemSelectedListener {
+            when (it.itemId) {
                 R.id.nav_add_users -> startActivity(Intent(this, UserRegistation::class.java))
                 R.id.nav_add_vehicles -> startActivity(Intent(this, VehicleRegistrationActivity::class.java))
                 R.id.nav_add_trip -> startActivity(Intent(this, TripCreateActivity::class.java))
                 R.id.nav_manage_users -> startActivity(Intent(this, ListUserActivity::class.java))
                 R.id.nav_manage_vehicles -> startActivity(Intent(this, VehicleListActivity::class.java))
                 R.id.nav_manage_trips -> startActivity(Intent(this, TripListActivity::class.java))
-                R.id.nav_billing_and_records -> Toast.makeText(this, "Billing and Records Development is in Progress, feature soon be avalilable", 3000).show()
-                R.id.nav_aboutapp -> Toast.makeText(this, "About App section Development is in Progress, feature soon be avalilable", 3000).show()
-                R.id.nav_aboutdeveloper -> Toast.makeText(this, "About Developer and Contact section Development is in Progress, feature soon be avalilable", 3000).show()
-                R.id.nav_logout -> {h_logout()}
-                else -> { /* handle other navs */ }
+                R.id.nav_logout -> logout()
             }
             drawer.closeDrawer(GravityCompat.START)
             true
         }
     }
 
-    private fun h_logout(){
+    private fun setupAlertsRecycler() {
+        rvAlerts.layoutManager = LinearLayoutManager(this)
+        alertAdapter = DashboardAlertAdapter(alertList) { alert ->
+            when (alert.type) {
+                AlertType.BILL_PENDING -> startActivity(Intent(this, TripListActivity::class.java))
+                AlertType.COMPLIANCE_EXPIRED,
+                AlertType.COMPLIANCE_EXPIRING -> startActivity(Intent(this, VehicleListActivity::class.java))
+            }
+        }
+        rvAlerts.adapter = alertAdapter
+    }
+
+    /* ================= LOAD DATA ================= */
+
+    private fun loadAllStats() {
+        alertList.clear()
+        loadUserStats()
+        loadVehicleStats()
+        loadTripStatsForRange(getStartOfDay(), getEndOfDay())
+        loadTripStatsForRange(getStartOfWeek(), getEndOfDay(), ::applyWeekStats)
+        loadTripStatsForRange(getStartOfMonth(), getEndOfDay(), ::applyMonthStats)
+        loadTripStatsForRange(getStartOfYear(), getEndOfDay(), ::applyYearStats)
+        loadAlerts()
+    }
+
+    private fun loadAlerts() {
+        loadComplianceAlerts()
+        loadBillPendingAlerts()
+    }
+
+    /* ================= ALERTS ================= */
+
+    private fun loadComplianceAlerts() {
+
+        alertList.clear()
+
+        db.collection("vehicles")
+            .get()
+            .addOnSuccessListener { snap ->
+
+                val today = Calendar.getInstance().time
+
+                for (doc in snap.documents) {
+
+                    val vehicleId = doc.id
+                    val vehicleNo = doc.getString("vehicle_number") ?: vehicleId
+
+                    val compliance =
+                        doc.toObject(com.omkara.sirenservices_internal.models.VehicleModel::class.java)
+                            ?.compliance ?: continue
+
+                    // ---------- Check all compliance sections ----------
+                    checkComplianceSection(
+                        title = "Insurance",
+                        expiryStr = compliance.insurance?.current?.valid_till,
+                        vehicleId = vehicleId,
+                        vehicleNo = vehicleNo,
+                        today = today
+                    )
+
+                    checkComplianceSection(
+                        title = "PUC",
+                        expiryStr = compliance.puc?.current?.valid_till,
+                        vehicleId = vehicleId,
+                        vehicleNo = vehicleNo,
+                        today = today
+                    )
+
+                    checkComplianceSection(
+                        title = "Permit",
+                        expiryStr = compliance.permit?.current?.valid_till,
+                        vehicleId = vehicleId,
+                        vehicleNo = vehicleNo,
+                        today = today
+                    )
+
+                    checkComplianceSection(
+                        title = "Fitness",
+                        expiryStr = compliance.fitness?.current?.valid_till,
+                        vehicleId = vehicleId,
+                        vehicleNo = vehicleNo,
+                        today = today
+                    )
+                }
+
+                updateAlertsUI()
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "Failed to load compliance alerts", it)
+                updateAlertsUI()
+            }
+    }
+
+    private fun checkComplianceSection(
+        title: String,
+        expiryStr: String?,
+        vehicleId: String,
+        vehicleNo: String,
+        today: Date
+    ) {
+        val expiryDate = parseComplianceDate(expiryStr) ?: return
+
+        val diffMillis = expiryDate.time - today.time
+        val daysLeft = (diffMillis / (1000 * 60 * 60 * 24)).toInt()
+
+        when {
+            daysLeft < 0 -> {
+                alertList.add(
+                    DashboardAlert(
+                        type = AlertType.COMPLIANCE_EXPIRED,
+                        title = "$title Expired",
+                        description = "Vehicle $vehicleNo — expired on $expiryStr",
+                        refId = vehicleId,
+                        severity = 3
+                    )
+                )
+            }
+
+            daysLeft <= ALERT_EXPIRY_DAYS -> {
+                alertList.add(
+                    DashboardAlert(
+                        type = AlertType.COMPLIANCE_EXPIRING,
+                        title = "$title Expiring Soon",
+                        description = "Vehicle $vehicleNo — expires in $daysLeft days ($expiryStr)",
+                        refId = vehicleId,
+                        severity = 2
+                    )
+                )
+            }
+        }
+    }
+
+
+    private fun loadBillPendingAlerts() {
+        db.collection("trips")
+            .whereEqualTo("status", "COMPLETED")
+            .whereEqualTo("is_bill_generated", false)
+            .get()
+            .addOnSuccessListener { snap ->
+                for (doc in snap.documents) {
+                    alertList.add(
+                        DashboardAlert(
+                            type = AlertType.BILL_PENDING,
+                            title = "Bill Pending",
+                            description = "Bill not generated for trip ${doc.getString("trip_number")}",
+                            refId = doc.id,        // trip_id
+                            severity = 1           // LOW
+                        )
+                    )
+                }
+                updateAlertsUI()
+            }
+    }
+
+    private fun updateAlertsUI() {
+        tvNoAlerts.visibility = if (alertList.isEmpty()) MaterialTextView.VISIBLE else MaterialTextView.GONE
+        alertAdapter.notifyDataSetChanged()
+        swipeRefresh.isRefreshing = false
+    }
+
+    /* ================= USER / VEHICLE / TRIP STATS ================= */
+
+    private fun loadUserStats() {
+        db.collection("users").get().addOnSuccessListener {
+            tvUsersTotal.text = "Total: ${it.size()}"
+            tvUsersActive.text = "Active: ${it.count { d -> d.getString("status") == "Active" }}"
+            tvUsersOccupied.text = "Occupied: ${it.count { d -> d.getString("status") == "Occupied" }}"
+        }
+    }
+
+    private fun loadVehicleStats() {
+        db.collection("vehicles").get().addOnSuccessListener {
+            tvVehiclesTotal.text = "Total: ${it.size()}"
+            tvVehiclesActive.text = "Available: ${it.count { d -> d.getString("status") == "ACTIVE" }}"
+            tvVehiclesMaint.text = "Maintenance: ${it.count { d -> d.getString("status") == "MAINTENANCE" }}"
+        }
+    }
+
+    private fun loadTripStatsForRange(
+        start: Date,
+        end: Date,
+        cb: ((TripAgg) -> Unit)? = null
+    ) {
+        db.collection("trips")
+            .whereGreaterThanOrEqualTo("created_at", Timestamp(start))
+            .whereLessThanOrEqualTo("created_at", Timestamp(end))
+            .get()
+            .addOnSuccessListener { snap ->
+                var revenue = 0.0
+                var spend = 0.0
+                var pending = 0.0
+
+                snap.documents.forEach {
+                    revenue += it.getDouble("trip_cost") ?: 0.0
+                    spend += (it.getDouble("fuel_cost") ?: 0.0)
+                    spend += (it.getDouble("servicing_cost") ?: 0.0)
+                    spend += (it.getDouble("mechanic_cost") ?: 0.0)
+                    pending += it.getDouble("pending_amount") ?: 0.0
+                }
+
+                val agg = TripAgg(revenue, spend, pending)
+                if (cb != null) cb(agg) else applyTodayStats(agg)
+            }
+    }
+
+    private fun applyTodayStats(a: TripAgg) {
+        tvTodayRevenue.text = "Revenue: ${nf.format(a.revenue)}"
+        tvTodaySpend.text = "Spent: ${nf.format(a.spend)}"
+        tvTodayPending.text = "Pending: ${nf.format(a.pending)}"
+    }
+
+    private fun applyWeekStats(a: TripAgg) {
+        tvWeekRevenue.text = "Revenue: ${nf.format(a.revenue)}"
+        tvWeekSpend.text = "Spent: ${nf.format(a.spend)}"
+        tvWeekBalance.text = "Balance: ${nf.format(a.revenue - a.spend)}"
+    }
+
+    private fun applyMonthStats(a: TripAgg) {
+        tvMonthRevenue.text = "Revenue: ${nf.format(a.revenue)}"
+        tvMonthSpend.text = "Spent: ${nf.format(a.spend)}"
+        tvMonthDailyAvg.text = "Daily Avg: ${nf.format(a.revenue / 30)}"
+    }
+
+    private fun applyYearStats(a: TripAgg) {
+        tvYearRevenue.text = "Revenue: ${nf.format(a.revenue)}"
+        tvYearSpend.text = "Spent: ${nf.format(a.spend)}"
+        tvYearDailyAvg.text = "Daily Avg: ${nf.format(a.revenue / 365)}"
+    }
+
+    private fun logout() {
         auth.signOut()
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
 
-    private fun loadAllStats() {
-        swipeRefresh.isRefreshing = true
+    data class TripAgg(
+        val revenue: Double,
+        val spend: Double,
+        val pending: Double
+    )
 
-        loadUserStats()
-        loadVehicleStats()
-        // load trip stats for different windows
-        loadTripStatsForRange(getStartOfDay(), getEndOfDay())   // today
-        loadTripStatsForRange(getStartOfWeek(), getEndOfDay(), resultCallback = ::applyWeekStats)
-        loadTripStatsForRange(getStartOfMonth(), getEndOfDay(), resultCallback = ::applyMonthStats)
-        loadTripStatsForRange(getStartOfYear(), getEndOfDay(), resultCallback = ::applyYearStats)
-        // ensure spinner off after last call — we will clear it when today query completes
-    }
+    /* ================= DATE HELPERS ================= */
 
-    private fun loadUserStats() {
-        db.collection("users").get()
-            .addOnSuccessListener { snap ->
-                val total = snap.size()
-                tvUsersTotal.text = "Total: $total"
-
-                // active / occupied counts
-                val active = snap.documents.count { it.getString("status")?.equals("Active", true) == true }
-                val occupied = snap.documents.count { it.getString("status")?.equals("Occupied", true) == true }
-                tvUsersActive.text = "Active: $active"
-                tvUsersOccupied.text = "Occupied: $occupied"
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "loadUserStats failed", e)
-                Toast.makeText(this, "Failed loading user stats: ${e.message}", Toast.LENGTH_LONG).show()
-            }
-    }
-
-    private fun loadVehicleStats() {
-        db.collection("vehicles").get()
-            .addOnSuccessListener { snap ->
-                val total = snap.size()
-                tvVehiclesTotal.text = "Total: $total"
-
-                val available = snap.documents.count { it.getString("status")?.equals("AVAILABLE", true) == true || it.getString("status")?.equals("ACTIVE", true) == true }
-                val maintenance = snap.documents.count { it.getString("status")?.equals("MAINTENANCE", true) == true || it.getString("status")?.equals("MAINTENANCE_REQUESTED", true) == true }
-                tvVehiclesActive.text = "Available: $available"
-                tvVehiclesMaint.text = "Maintenance: $maintenance"
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "loadVehicleStats failed", e)
-            }
-    }
-
-    /**
-     * Query trips in [start, end] (created_at timestamps) and aggregate numeric fields.
-     * If resultCallback provided, it will be called with the aggregated map, otherwise assumes 'today' use.
-     */
-    private fun loadTripStatsForRange(
-        start: Date,
-        end: Date,
-        resultCallback: ((TripAgg) -> Unit)? = null
-    ) {
-        val startTs = Timestamp(start)
-        val endTs = Timestamp(end)
-
-        db.collection("trips")
-            .whereGreaterThanOrEqualTo("created_at", startTs)
-            .whereLessThanOrEqualTo("created_at", endTs)
-            .get()
-            .addOnSuccessListener { snap ->
-                // aggregate
-                var revenue = 0.0
-                var spend = 0.0
-                var pending = 0.0
-                var ongoingCount = 0
-                var completedCount = 0
-
-                for (doc in snap.documents) {
-                    val t = doc.toObject(TripModel::class.java)
-                    if (t != null) {
-                        revenue += (t.trip_cost)
-                        // spend = fuel + servicing + mechanic
-                        spend += (t.fuel_cost + t.servicing_cost + t.mechanic_cost)
-                        pending += (t.pending_amount)
-                        when (t.status?.uppercase(Locale.getDefault())) {
-                            "ONGOING" -> ongoingCount++
-                            "ASSIGNED" -> ongoingCount++
-                            "COMPLETED" -> completedCount++
-                        }
-                    } else {
-                        // fallback: try numeric fields directly
-                        revenue += (doc.getDouble("trip_cost") ?: 0.0)
-                        spend += (doc.getDouble("fuel_cost") ?: 0.0)
-                        spend += (doc.getDouble("servicing_cost") ?: 0.0)
-                        spend += (doc.getDouble("mechanic_cost") ?: 0.0)
-                        pending += (doc.getDouble("pending_amount") ?: 0.0)
-                        val st = doc.getString("status")?.uppercase(Locale.getDefault())
-                        if (st == "COMPLETED") completedCount++ else if (st == "ONGOING" || st == "ASSIGNED") ongoingCount++
-                    }
-                }
-
-                val agg = TripAgg(
-                    revenue = revenue,
-                    spend = spend,
-                    pending = pending,
-                    ongoing = ongoingCount,
-                    completed = completedCount,
-                    count = snap.size()
-                )
-
-                if (resultCallback != null) {
-                    resultCallback(agg)
-                } else {
-                    // default: treat as 'today' snapshot
-                    applyTodayStats(agg)
-                }
-
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "loadTripStatsForRange failed", e)
-                if (resultCallback == null) swipeRefresh.isRefreshing = false
-            }
-    }
-
-    // Called when today aggregation finishes
-    private fun applyTodayStats(agg: TripAgg) {
-        tvTodayRevenue.text = "Revenue: ${nf.format(agg.revenue)}"
-        tvTodaySpend.text = "Spent: ${nf.format(agg.spend)}"
-        tvTodayPending.text = "Pending: ${nf.format(agg.pending)}"
-
-        // Stop spinner (we call this after today finishes; other ranges update independently)
-        swipeRefresh.isRefreshing = false
-    }
-
-    private fun applyWeekStats(agg: TripAgg) {
-        tvWeekRevenue.text = "Revenue: ${nf.format(agg.revenue)}"
-        tvWeekSpend.text = "Spent: ${nf.format(agg.spend)}"
-        val balance = agg.revenue - agg.spend
-        tvWeekBalance.text = "Balance: ${nf.format(balance)}"
-    }
-
-    private fun applyMonthStats(agg: TripAgg) {
-        tvMonthRevenue.text = "Revenue: ${nf.format(agg.revenue)}"
-        tvMonthSpend.text = "Spent: ${nf.format(agg.spend)}"
-        val days = daysBetween(getStartOfMonth(), getEndOfDay()).coerceAtLeast(1)
-        tvMonthDailyAvg.text = "Daily Avg: ${nf.format(agg.revenue / days)}"
-    }
-
-    private fun applyYearStats(agg: TripAgg) {
-        tvYearRevenue.text = "Revenue: ${nf.format(agg.revenue)}"
-        tvYearSpend.text = "Spent: ${nf.format(agg.spend)}"
-        val days = daysBetween(getStartOfYear(), getEndOfDay()).coerceAtLeast(1)
-        tvYearDailyAvg.text = "Daily Avg: ${nf.format(agg.revenue / days)}"
-    }
-
-    // ---------- Time helpers ----------
     private fun getStartOfDay(): Date {
         val c = Calendar.getInstance()
         c.set(Calendar.HOUR_OF_DAY, 0)
@@ -346,9 +436,8 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun getStartOfWeek(): Date {
         val c = Calendar.getInstance()
-        // set to start of week (you can change to Calendar.MONDAY if preferred)
         c.firstDayOfWeek = Calendar.MONDAY
-        c.set(Calendar.DAY_OF_WEEK, c.firstDayOfWeek)
+        c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
         c.set(Calendar.HOUR_OF_DAY, 0)
         c.set(Calendar.MINUTE, 0)
         c.set(Calendar.SECOND, 0)
@@ -376,117 +465,16 @@ class DashboardActivity : AppCompatActivity() {
         return c.time
     }
 
-    private fun daysBetween(start: Date, end: Date): Int {
-        val diff = end.time - start.time
-        return (diff / (1000L * 60 * 60 * 24)).toInt()
+    private fun parseComplianceDate(dateStr: String?): Date? {
+        if (dateStr.isNullOrBlank()) return null
+
+        return try {
+            complianceDateFormat.parse(dateStr)
+        } catch (e: Exception) {
+            Log.e("Dashboard", "Invalid compliance date: $dateStr", e)
+            null
+        }
     }
 
-    // small aggregation model
-    data class TripAgg(
-        val revenue: Double = 0.0,
-        val spend: Double = 0.0,
-        val pending: Double = 0.0,
-        val ongoing: Int = 0,
-        val completed: Int = 0,
-        val count: Int = 0
-    )
-
-
-    fun migrateAllVehiclesToNewComplianceModel() {
-
-        val db = FirebaseFirestore.getInstance()
-        val vehiclesRef = db.collection("vehicles")
-
-        vehiclesRef.get()
-            .addOnSuccessListener { snapshot ->
-
-                for (doc in snapshot.documents) {
-
-                    val vehicleId = doc.id
-                    val data = doc.data ?: continue
-
-                    // If already migrated → skip
-                    if (data.containsKey("compliance")) {
-                        continue
-                    }
-
-                    val insuranceSection = ComplianceSection(
-                        current = ComplianceCurrent(
-                            provider = data["insurance_provider"] as? String,
-                            number = data["insurance_number"] as? String,
-                            valid_from = data["insurance_start"] as? String,
-                            valid_till = data["insurance_end"] as? String,
-                            updated_at = Timestamp.now()
-                        ),
-                        history = emptyList()
-                    )
-
-                    val pucSection = ComplianceSection(
-                        current = ComplianceCurrent(
-                            certificate_no = data["puc_number"] as? String,
-                            valid_from = data["puc_start"] as? String,
-                            valid_till = data["puc_end"] as? String,
-                            updated_at = Timestamp.now()
-                        ),
-                        history = emptyList()
-                    )
-
-                    val permitSection = ComplianceSection(
-                        current = ComplianceCurrent(
-                            number = data["permit_number"] as? String,
-                            valid_till = data["permit_expiry"] as? String,
-                            updated_at = Timestamp.now()
-                        ),
-                        history = emptyList()
-                    )
-
-                    val fitnessSection = ComplianceSection(
-                        current = ComplianceCurrent(
-                            valid_till = data["fitness_expiry"] as? String,
-                            updated_at = Timestamp.now()
-                        ),
-                        history = emptyList()
-                    )
-
-                    val complianceModel = ComplianceModel(
-                        insurance = insuranceSection,
-                        puc = pucSection,
-                        permit = permitSection,
-                        fitness = fitnessSection
-                    )
-
-                    // Build update map — keeps everything else intact
-                    val updateMap = mutableMapOf<String, Any?>()
-                    updateMap["compliance"] = complianceModel
-
-                    // Optional: REMOVE old fields from root (recommended)
-                    updateMap["insurance_provider"] = FieldValue.delete()
-                    updateMap["insurance_number"] = FieldValue.delete()
-                    updateMap["insurance_start"] = FieldValue.delete()
-                    updateMap["insurance_end"] = FieldValue.delete()
-
-                    updateMap["puc_number"] = FieldValue.delete()
-                    updateMap["puc_start"] = FieldValue.delete()
-                    updateMap["puc_end"] = FieldValue.delete()
-
-                    updateMap["permit_number"] = FieldValue.delete()
-                    updateMap["permit_expiry"] = FieldValue.delete()
-
-                    updateMap["fitness_expiry"] = FieldValue.delete()
-
-                    vehiclesRef.document(vehicleId)
-                        .update(updateMap)
-                        .addOnSuccessListener {
-                            Log.d("MIGRATION", "Migrated vehicle: $vehicleId")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e("MIGRATION", "Error migrating $vehicleId: ${e.message}")
-                        }
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("MIGRATION", "Error loading vehicles: ${e.message}")
-            }
-    }
 
 }

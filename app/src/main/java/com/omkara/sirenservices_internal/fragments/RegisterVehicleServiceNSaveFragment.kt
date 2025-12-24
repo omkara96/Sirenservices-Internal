@@ -192,7 +192,8 @@ class RegisterVehicleServiceNSaveFragment : Fragment() {
                     "engine_number" to vm.engine_number.value,
                     "fuel_type" to vm.fuelType.value,
                     "transmission" to vm.transmissionType.value,
-                    "owner_type" to vm.vehicleOwnership.value
+                    "owner_type" to vm.vehicleOwnership.value,
+                    "status" to "ACTIVE"
                 )
 
                 // compliance & documents from ViewModel if present

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -221,19 +222,21 @@ class TripCreateActivity : AppCompatActivity() {
 
                     // vehicle_details is nested
                     val details = doc.get("vehicle_info") as? Map<*, *> ?: continue
-
+                    val staus2 = doc.get("status") as? String ?: "INACTIVE"
                     val status = details["status"] as? String ?: "INACTIVE"
                     if (status != "ACTIVE") continue   // skip inactive vehicles
 
                     // check current trip
                     val curr = doc.getString("current_trip_id")
-                    if (!curr.isNullOrEmpty()) continue  // skip occupied vehicles
+                    if (!curr.isNullOrEmpty() || !curr.isNullOrBlank()) continue  // skip occupied vehicles
 
                     val number = details["vehicle_number"] as? String ?: id
                     val make = details["make"] as? String ?: ""
                     val model = details["model"] as? String ?: ""
 
                     val display = "$number ($make $model)".trim()
+
+                    Log.d("TRIPCREATE-ACTIVITY", "vehicle details: 1.Vehicle Number: $display, 2.Status: $status, 3.Current Trip: $curr")
 
                     vehicleMap[display] = id
                     list.add(display)
@@ -385,6 +388,8 @@ class TripCreateActivity : AppCompatActivity() {
         val tripRef = db.collection("trips").document()
         val billRef = db.collection("bills").document()
         val vehicleRef = db.collection("vehicles").document(vehicleId)
+        val driverRef = db.collection("users").document(driverId)
+
 
         // BUILD TRIP MAP
         val tripMap = hashMapOf<String, Any?>(
@@ -440,10 +445,11 @@ class TripCreateActivity : AppCompatActivity() {
 
             if (!vehicleSnap.exists()) throw Exception("Vehicle not found")
 
+
             val status = vehicleSnap.getString("status") ?: "ACTIVE"
             val currTrip = vehicleSnap.getString("current_trip_id")
 
-            if (status != "ACTIVE") throw Exception("Vehicle not available (status=$status)")
+            //if (status != "ACTIVE") throw Exception("Vehicle not available (status=$status)")
             if (!currTrip.isNullOrEmpty()) throw Exception("Vehicle already in trip")
 
             // CREATE TRIP + BILL
@@ -456,6 +462,13 @@ class TripCreateActivity : AppCompatActivity() {
                 "current_trip_id" to tripRef.id,
                 "updated_at" to FieldValue.serverTimestamp(),
                 "last_odometer" to startOdo
+            ))
+
+            // ✅ ADD THIS — UPDATE DRIVER STATUS
+            tx.update(driverRef, mapOf(
+                "status" to "occupied",
+                "current_trip_id" to tripRef.id,
+                "updated_at" to FieldValue.serverTimestamp()
             ))
 
             null
